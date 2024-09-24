@@ -5,3 +5,14 @@
 * Academiejaar: 24-25
 * Klasgroep: INF202B
 * Onderwerp: TyreType *-* F1Car 1-* FastestLap
+## Sprint 1
+
+```mermaid
+classDiagram
+  class F1Car
+  class FastestLap
+  class TyreType
+
+  TyreType "*" -- "*" F1Car
+  F1Car "1" -- "*" FastestLap
+```
