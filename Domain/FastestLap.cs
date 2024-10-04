@@ -1,16 +1,32 @@
-﻿namespace Domain
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Domain
 {
     public class FastestLap
     {
-        public int Id { get; set; } 
-        public string Circuit { get; set; }
-        public int AirTemperature { get; set; }
-        public int TrackTemperature { get; set; }
-        public TimeSpan LapTime { get; set; }
-        public DateTime DateOfRecord { get; set; }
-        public F1Car Car { get; set; } 
+        public int Id { get; set; }
 
-        public FastestLap(string circuit, int airTemperature, int trackTemperature, TimeSpan lapTime, DateTime dateOfRecord, F1Car car)
+        [Required(ErrorMessage = "Circuit name is required.")]
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "Circuit name must be between 3 and 50 characters.")]
+        public string Circuit { get; set; }
+
+        [Range(-30, 50, ErrorMessage = "Air temperature must be between -30 and 50 degrees Celsius.")]
+        public int AirTemperature { get; set; }
+
+        [Range(-30, 70, ErrorMessage = "Track temperature must be between -30 and 70 degrees Celsius.")]
+        public int TrackTemperature { get; set; }
+
+        [Required(ErrorMessage = "Lap time is required.")]
+        public TimeSpan LapTime { get; set; }
+
+        [Required(ErrorMessage = "Date of record is required.")]
+        public DateTime DateOfRecord { get; set; }
+
+        [Required(ErrorMessage = "A car is required for the fastest lap.")]
+        public F1Car Car { get; set; }
+
+        public FastestLap(string circuit, int airTemperature, int trackTemperature, TimeSpan lapTime,
+            DateTime dateOfRecord, F1Car car)
         {
             Circuit = circuit;
             AirTemperature = airTemperature;
@@ -24,7 +40,8 @@
         {
             string formattedLapTime = $"{LapTime.Minutes:D2}:{LapTime.Seconds:D2}.{LapTime.Milliseconds:D3}";
             string formattedDate = DateOfRecord.ToString("dd MMM yyyy");
-            return $"Lap at {Circuit} with a {formattedLapTime} by {Car.Chasis} of team {Car.Team}, using a {Car.Tyres} tyre compound driven at {formattedDate}, Under the conditions of AirTemp: {AirTemperature} and TrackTemp: {TrackTemperature}";
+            return
+                $"Lap at {Circuit} with a {formattedLapTime} by {Car.Chasis} of team {Car.Team}, using a {Car.Tyres} tyre compound driven at {formattedDate}, Under the conditions of AirTemp: {AirTemperature} and TrackTemp: {TrackTemperature}";
         }
     }
 }
