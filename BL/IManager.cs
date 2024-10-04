@@ -1,4 +1,4 @@
-﻿namespace BL;
+﻿namespace BusinessLayer;
 
 public interface IManager
 {

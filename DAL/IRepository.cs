@@ -1,4 +1,4 @@
-﻿namespace DAL;
+﻿namespace DataAccessLayer;
 
 public interface IRepository
 {

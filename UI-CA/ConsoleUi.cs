@@ -1,7 +1,7 @@
 ﻿
 using Domain;
 
-namespace CA
+namespace UI_CA
 {
 
     public class ConsoleUi

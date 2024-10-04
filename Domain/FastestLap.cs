@@ -2,6 +2,7 @@
 {
     public class FastestLap
     {
+        public int Id { get; set; } 
         public string Circuit { get; set; }
         public int AirTemperature { get; set; }
         public int TrackTemperature { get; set; }
