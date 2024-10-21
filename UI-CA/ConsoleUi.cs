@@ -1,13 +1,12 @@
 ﻿using BusinessLayer;
 using Domain;
+using UI_CA.Extentions;
 
 namespace UI_CA
 {
     public class ConsoleUi
     {
         private readonly IManager _manager;
-
-        // Updated constructor to accept IManager
         public ConsoleUi(IManager manager)
         {
             _manager = manager;
@@ -57,7 +56,7 @@ namespace UI_CA
             var cars = _manager.GetAllF1Cars();
             foreach (var car in cars)
             {
-                Console.WriteLine(car.ToString());
+                Console.WriteLine(PrintExtentions.PrintF1CarDetails(car));
             }
         }
 
@@ -73,7 +72,7 @@ namespace UI_CA
                 {
                     if (lap.Car.Team.ToString().IndexOf(teamName, StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        Console.WriteLine(lap.ToString());
+                        Console.WriteLine(PrintExtentions.PrintFastestLapDetails(lap));
                     }
                 }
             }
@@ -92,42 +91,63 @@ namespace UI_CA
 
         private void FilterLaps()
         {
-            Console.WriteLine("Enter the Team's Driver's positions in the championship (as a number) or leave blank:");
-            string driverPositionInput = Console.ReadLine();
-            double? driverPosition = null;
-
-            if (!string.IsNullOrEmpty(driverPositionInput))
+            try
             {
-                if (double.TryParse(driverPositionInput, out double parsedPosition))
+                Console.WriteLine("Enter the Team's Driver's positions in the championship (as a number) or leave blank:");
+                string driverPositionInput = Console.ReadLine();
+                double? driverPosition = null;
+
+                if (!string.IsNullOrEmpty(driverPositionInput))
                 {
-                    driverPosition = parsedPosition;
+                    if (double.TryParse(driverPositionInput, out double parsedPosition))
+                    {
+                        driverPosition = parsedPosition;
+                    }
+                }
+
+                Console.WriteLine("Enter a Lap Time (as a number in seconds, e.g., 1.40.800) or leave blank:");
+                string lapTimeInput = Console.ReadLine();
+                TimeSpan? lapTime = null;
+
+                if (!string.IsNullOrEmpty(lapTimeInput))
+                {
+                    if (double.TryParse(lapTimeInput, out double parsedLapTimeInSeconds))
+                    {
+                        lapTime = TimeSpan.FromSeconds(parsedLapTimeInSeconds);
+                    }
+                }
+                
+                var laps = _manager.GetAllFastestLaps();
+                
+                if (laps == null || !laps.Any())
+                {
+                    Console.WriteLine("No fastest laps found.");
+                    return;
+                }
+
+                foreach (var lap in laps)
+                {
+                    if (lap.Car == null)
+                    {
+                        Console.WriteLine("Error: A lap is missing associated car data.");
+                        continue;
+                    }
+
+                    bool driverPositionMatch = !driverPosition.HasValue || lap.Car.DriversPositions == driverPosition.Value;
+                    bool lapTimeMatch = !lapTime.HasValue || Math.Abs(lap.LapTime.TotalSeconds - lapTime.Value.TotalSeconds) < 0.001;
+
+                    if (driverPositionMatch && lapTimeMatch)
+                    {
+                        Console.WriteLine(PrintExtentions.PrintFastestLapDetails(lap));
+                    }
                 }
             }
-
-            Console.WriteLine("Enter a Lap Time (as a number in seconds, e.g., 85.327) or leave blank:");
-            string lapTimeInput = Console.ReadLine();
-            TimeSpan? lapTime = null;
-
-            if (!string.IsNullOrEmpty(lapTimeInput))
+            catch (Exception e)
             {
-                if (double.TryParse(lapTimeInput, out double parsedLapTimeInSeconds))
-                {
-                    lapTime = TimeSpan.FromSeconds(parsedLapTimeInSeconds);
-                }
-            }
-
-            var laps = _manager.GetAllFastestLaps();
-            foreach (var lap in laps)
-            {
-                bool driverPositionMatch = !driverPosition.HasValue || lap.Car.DriversPositions == driverPosition.Value;
-                bool lapTimeMatch = !lapTime.HasValue || Math.Abs(lap.LapTime.TotalSeconds - lapTime.Value.TotalSeconds) < 0.001;
-
-                if (driverPositionMatch && lapTimeMatch)
-                {
-                    Console.WriteLine(lap.ToString());
-                }
+                Console.WriteLine($"Error: {e.Message}. Please try again.");
             }
         }
+
 
         private void AddNewF1Car()
         {
@@ -156,7 +176,7 @@ namespace UI_CA
                 double? enginePower = string.IsNullOrEmpty(enginePowerInput) ? (double?)null : double.Parse(enginePowerInput);
 
                 var newCar = _manager.AddF1Car(team, chasis, constructorsPosition, driverPositions, manufactureDate, tyreType, enginePower);
-                Console.WriteLine($"New F1 Car Added: {newCar}");
+                Console.WriteLine($"New F1 Car Added: {PrintExtentions.PrintF1CarDetails(newCar)}");
             }
             catch (Exception ex)
             {
@@ -164,7 +184,7 @@ namespace UI_CA
             }
         }
 
-        private void AddNewFastestLap()
+        private void AddNewFastestLap() 
         {
             try
             {
@@ -189,7 +209,7 @@ namespace UI_CA
                 F1Car car = _manager.GetF1Car(carId);
 
                 var newLap = _manager.AddFastestLap(circuit, airTemperature, trackTemperature, lapTime, dateOfRecord, car);
-                Console.WriteLine($"New Fastest Lap Added: {newLap}");
+                Console.WriteLine($"New Fastest Lap Added: {PrintExtentions.PrintFastestLapDetails(newLap)}");
             }
             catch (Exception ex)
             {
@@ -197,4 +217,5 @@ namespace UI_CA
             }
         }
     }
+    
 }

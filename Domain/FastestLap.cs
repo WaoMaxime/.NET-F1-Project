@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain
 {
@@ -23,8 +24,15 @@ namespace Domain
         public DateTime DateOfRecord { get; set; }
 
         [Required(ErrorMessage = "A car is required for the fastest lap.")]
+        
+        [NotMapped]  
         public F1Car Car { get; set; }
 
+        public int CarId { get; set; } 
+        
+
+        public FastestLap() { }
+    
         public FastestLap(string circuit, int airTemperature, int trackTemperature, TimeSpan lapTime,
             DateTime dateOfRecord, F1Car car)
         {
@@ -34,14 +42,8 @@ namespace Domain
             LapTime = lapTime;
             DateOfRecord = dateOfRecord;
             Car = car;
-        }
-
-        public override string ToString()
-        {
-            string formattedLapTime = $"{LapTime.Minutes:D2}:{LapTime.Seconds:D2}.{LapTime.Milliseconds:D3}";
-            string formattedDate = DateOfRecord.ToString("dd MMM yyyy");
-            return
-                $"Lap at {Circuit} with a {formattedLapTime} by {Car.Chasis} of team {Car.Team}, using a {Car.Tyres} tyre compound driven at {formattedDate}, Under the conditions of AirTemp: {AirTemperature} and TrackTemp: {TrackTemperature}";
+            CarId = car.Id;  
         }
     }
+
 }

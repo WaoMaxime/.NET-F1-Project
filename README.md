@@ -16,3 +16,32 @@ classDiagram
   TyreType "*" -- "*" F1Car
   F1Car "1" -- "*" FastestLap
 ```
+## Sprint 3
+
+### Beide zoekcriteria ingevuld
+```sql
+SELECT "f"."Id", "f"."Circuit", "f"."AirTemperature", "f"."TrackTemperature", "f"."LapTime", "f"."DateOfRecord"
+FROM "FastestLaps" AS "f"
+WHERE instr("f"."Circuit", @__circuit_0) > 0 AND "f"."LapTime" = @__lapTime_1
+```
+
+### Enkel zoeken op naam
+```sql
+SELECT "f"."Id", "f"."Circuit", "f"."AirTemperature", "f"."TrackTemperature", "f"."LapTime", "f"."DateOfRecord"
+FROM "FastestLaps" AS "f"
+WHERE instr("f"."Circuit", @__circuit_0) > 0
+```
+
+### Enkel zoeken op geboortedatum
+```sql
+SELECT "f"."Id", "f"."Circuit", "f"."AirTemperature", "f"."TrackTemperature", "f"."LapTime", "f"."DateOfRecord"
+FROM "FastestLaps" AS "f"
+WHERE "f"."LapTime" = @__lapTime_0
+```
+
+### Beide zoekcriteria leeg
+```sql
+SELECT "f"."Id", "f"."Circuit", "f"."AirTemperature", "f"."TrackTemperature", "f"."LapTime", "f"."DateOfRecord"
+FROM "FastestLaps" AS "f"
+```
+

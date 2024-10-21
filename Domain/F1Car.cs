@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Domain
 {
     public enum F1Team
@@ -34,12 +36,15 @@ namespace Domain
 
         [Required(ErrorMessage = "Manufacture date is required.")]
         public DateTime ManufactureDate { get; set; }
-
+        
         [Required(ErrorMessage = "Tyre type is required.")]
         public TyreType Tyres { get; set; }
 
         [Range(500, 1500, ErrorMessage = "Engine Power must be between 500 and 1500 HP.")]
         public double? EnginePower { get; set; }
+        
+        [NotMapped]  
+        public ICollection<FastestLap> FastestLaps { get; set; }
 
         public F1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, double? enginePower = null)
         {
@@ -63,14 +68,6 @@ namespace Domain
             {
                 yield return new ValidationResult("Manufacture date cannot be in the future.", new[] { nameof(ManufactureDate) });
             }
-        }
-
-        public override string ToString()
-        {
-            return string.Format("Team {0} with chassis {1}, Constructors Position: {2}, Drivers Position: {3}, Manufactured on: {4:dd-MM-yyyy}, Engine Power: {5} HP",
-                       Team, Chasis, ConstructorsPosition, DriversPositions, ManufactureDate,
-                       EnginePower.HasValue ? EnginePower.ToString() : "N/A") +
-                   "\n--------------------------------------------------------------------------------------------------------------------------------------";
         }
     }
 }
