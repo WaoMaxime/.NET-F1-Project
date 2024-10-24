@@ -24,19 +24,11 @@ namespace DataAccessLayer.EF
             }
         }
         
-        public bool CreateDatabase(bool deleteIfExists)
+        public bool CreateDatabase()
         {
-            if (deleteIfExists)
-            {
-                Console.WriteLine("Deleting existing database...");
-                this.Database.EnsureDeleted(); 
-            }
-
             Console.WriteLine("Creating database...");
-            bool databaseCreated = this.Database.EnsureCreated();
-
+            bool databaseCreated = Database.EnsureCreated();
             Console.WriteLine(databaseCreated ? "Database was created successfully." : "Database already exists.");
-            
             return databaseCreated;
         }
     }

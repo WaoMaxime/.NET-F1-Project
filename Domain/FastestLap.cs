@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain
 {
@@ -24,15 +23,12 @@ namespace Domain
         public DateTime DateOfRecord { get; set; }
 
         [Required(ErrorMessage = "A car is required for the fastest lap.")]
-        
-        [NotMapped]  
         public F1Car Car { get; set; }
 
-        public int CarId { get; set; } 
-        
+        public int CarId { get; set; }  
 
         public FastestLap() { }
-    
+
         public FastestLap(string circuit, int airTemperature, int trackTemperature, TimeSpan lapTime,
             DateTime dateOfRecord, F1Car car)
         {

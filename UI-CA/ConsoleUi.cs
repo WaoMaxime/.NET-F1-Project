@@ -1,4 +1,5 @@
-﻿using BusinessLayer;
+﻿using System.ComponentModel.DataAnnotations;
+using BusinessLayer;
 using Domain;
 using UI_CA.Extentions;
 
@@ -93,7 +94,7 @@ namespace UI_CA
         {
             try
             {
-                Console.WriteLine("Enter the Team's Driver's positions in the championship (as a number) or leave blank:");
+                Console.WriteLine("Enter the Team's Constructors's positions in the championship (as a number) or leave blank:");
                 string driverPositionInput = Console.ReadLine();
                 double? driverPosition = null;
 
@@ -103,20 +104,34 @@ namespace UI_CA
                     {
                         driverPosition = parsedPosition;
                     }
+                    else
+                    {
+                        Console.WriteLine("Invalid input for Constructors's Position. Please enter a valid number.");
+                        return; 
+                    }
                 }
 
-                Console.WriteLine("Enter a Lap Time (as a number in seconds, e.g., 1.40.800) or leave blank:");
+                Console.WriteLine("Enter a Lap Time (in the format 'minutes.seconds.milliseconds', e.g., 1.40.800) or leave blank:");
                 string lapTimeInput = Console.ReadLine();
                 TimeSpan? lapTime = null;
 
                 if (!string.IsNullOrEmpty(lapTimeInput))
                 {
-                    if (double.TryParse(lapTimeInput, out double parsedLapTimeInSeconds))
+                    string[] parts = lapTimeInput.Split('.');
+                    if (parts.Length == 3 &&
+                        int.TryParse(parts[0], out int minutes) &&
+                        int.TryParse(parts[1], out int seconds) &&
+                        int.TryParse(parts[2], out int milliseconds))
                     {
-                        lapTime = TimeSpan.FromSeconds(parsedLapTimeInSeconds);
+                        lapTime = new TimeSpan(0, 0, minutes, seconds, milliseconds);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid lap time format. Please use 'minutes.seconds.milliseconds'.");
+                        return;
                     }
                 }
-                
+
                 var laps = _manager.GetAllFastestLaps();
                 
                 if (laps == null || !laps.Any())
@@ -134,7 +149,7 @@ namespace UI_CA
                     }
 
                     bool driverPositionMatch = !driverPosition.HasValue || lap.Car.DriversPositions == driverPosition.Value;
-                    bool lapTimeMatch = !lapTime.HasValue || Math.Abs(lap.LapTime.TotalSeconds - lapTime.Value.TotalSeconds) < 0.001;
+                    bool lapTimeMatch = !lapTime.HasValue || Math.Abs((lap.LapTime - lapTime.Value).TotalMilliseconds) < 10;  // Allow slight differences
 
                     if (driverPositionMatch && lapTimeMatch)
                     {
@@ -147,6 +162,8 @@ namespace UI_CA
                 Console.WriteLine($"Error: {e.Message}. Please try again.");
             }
         }
+
+
 
 
         private void AddNewF1Car()
@@ -183,32 +200,124 @@ namespace UI_CA
                 Console.WriteLine($"Error: {ex.Message}. Please try again.");
             }
         }
+        
 
-        private void AddNewFastestLap() 
+         private void AddNewFastestLap() 
         {
             try
             {
-                Console.WriteLine("Enter Circuit Name:");
-                string circuit = Console.ReadLine();
+                string circuit;
+                do
+                {
+                    Console.WriteLine("Enter Circuit Name (min 3 characters, max 50):");
+                    circuit = Console.ReadLine();
+                } while (string.IsNullOrWhiteSpace(circuit) || circuit.Length < 3 || circuit.Length > 50);
+                
+                int airTemperature;
+                do
+                {
+                    Console.WriteLine("Enter Air Temperature (between -30 and 50 degrees Celsius):");
+                } while (!int.TryParse(Console.ReadLine(), out airTemperature) || airTemperature < -30 || airTemperature > 50);
+                
+                int trackTemperature;
+                do
+                {
+                    Console.WriteLine("Enter Track Temperature (between -30 and 70 degrees Celsius):");
+                } while (!int.TryParse(Console.ReadLine(), out trackTemperature) || trackTemperature < -30 || trackTemperature > 70);
+                
+                TimeSpan lapTime;
+                do
+                {
+                    Console.WriteLine("Enter Lap Time (in the format 'minutes.seconds.milliseconds', e.g., 1.40.564):");
+                    string lapTimeInput = Console.ReadLine();
+                    string[] parts = lapTimeInput.Split('.');
+                    if (parts.Length == 3 &&
+                        int.TryParse(parts[0], out int minutes) &&
+                        int.TryParse(parts[1], out int seconds) &&
+                        int.TryParse(parts[2], out int milliseconds))
+                    {
+                        lapTime = new TimeSpan(0, 0, minutes, seconds, milliseconds);
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid format. Please enter the lap time in 'minutes.seconds.milliseconds'.");
+                    }
+                } while (true);
+                
+                DateTime dateOfRecord;
+                do
+                {
+                    Console.WriteLine("Enter Date of Record (yyyy-mm-dd):");
+                } while (!DateTime.TryParse(Console.ReadLine(), out dateOfRecord) || dateOfRecord > DateTime.Now);
+                
+                F1Car car = null;
+                do
+                {
+                    Console.WriteLine("Enter the ID of the car used (or type 'new' to add a new car):");
+                    string carInput = Console.ReadLine();
 
-                Console.WriteLine("Enter Air Temperature:");
-                int airTemperature = int.Parse(Console.ReadLine());
+                    if (carInput.ToLower() == "new")
+                    {
+                        F1Team team;
+                        do
+                        {
+                            Console.WriteLine("Enter Team (e.g., RedBull, Mercedes, etc.):");
+                        } while (!Enum.TryParse<F1Team>(Console.ReadLine(), out team));
 
-                Console.WriteLine("Enter Track Temperature:");
-                int trackTemperature = int.Parse(Console.ReadLine());
+                        Console.WriteLine("Enter Chassis Name:");
+                        string chassis = Console.ReadLine();
 
-                Console.WriteLine("Enter Lap Time (in seconds, e.g., 85.327):");
-                double lapTimeInSeconds = double.Parse(Console.ReadLine());
-                TimeSpan lapTime = TimeSpan.FromSeconds(lapTimeInSeconds);
+                        int constructorsPosition;
+                        do
+                        {
+                            Console.WriteLine("Enter Constructors Position (1-10):");
+                        } while (!int.TryParse(Console.ReadLine(), out constructorsPosition) || constructorsPosition < 1 || constructorsPosition > 10);
 
-                Console.WriteLine("Enter Date of Record (yyyy-mm-dd):");
-                DateTime dateOfRecord = DateTime.Parse(Console.ReadLine());
+                        double driversPosition;
+                        do
+                        {
+                            Console.WriteLine("Enter Driver's Position in Championship (1-20):");
+                        } while (!double.TryParse(Console.ReadLine(), out driversPosition) || driversPosition < 1 || driversPosition > 20);
 
-                Console.WriteLine("Enter the ID of the car used:");
-                int carId = int.Parse(Console.ReadLine());
-                F1Car car = _manager.GetF1Car(carId);
+                        DateTime manufactureDate;
+                        do
+                        {
+                            Console.WriteLine("Enter Manufacture Date (yyyy-mm-dd):");
+                        } while (!DateTime.TryParse(Console.ReadLine(), out manufactureDate) || manufactureDate > DateTime.Now);
 
+                        TyreType tyres;
+                        do
+                        {
+                            Console.WriteLine("Enter Tyre Type (Soft, Medium, Hard):");
+                        } while (!Enum.TryParse<TyreType>(Console.ReadLine(), out tyres));
+
+                        double enginePower;
+                        do
+                        {
+                            Console.WriteLine("Enter Engine Power (in HP, e.g., 1000):");
+                        } while (!double.TryParse(Console.ReadLine(), out enginePower) || enginePower < 500 || enginePower > 1500);
+
+                        // Create a new car
+                        car = new F1Car(team, chassis, constructorsPosition, driversPosition, manufactureDate, tyres, enginePower);
+                        break;
+                    }
+                    else if (int.TryParse(carInput, out int carId))
+                    {
+                        car = _manager.GetF1Car(carId);
+                        if (car != null)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("No car found with the given ID. Please try again.");
+                        }
+                    }
+                } while (true);
+                
                 var newLap = _manager.AddFastestLap(circuit, airTemperature, trackTemperature, lapTime, dateOfRecord, car);
+                
                 Console.WriteLine($"New Fastest Lap Added: {PrintExtentions.PrintFastestLapDetails(newLap)}");
             }
             catch (Exception ex)
@@ -216,6 +325,6 @@ namespace UI_CA
                 Console.WriteLine($"Error: {ex.Message}. Please try again.");
             }
         }
+
     }
-    
 }

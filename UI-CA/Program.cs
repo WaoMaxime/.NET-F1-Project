@@ -9,7 +9,7 @@ var optionsBuilder = new DbContextOptionsBuilder<F1CarDbContext>()
 using (var context = new F1CarDbContext(optionsBuilder.Options))
 {
     
-    bool databaseCreated = context.CreateDatabase(deleteIfExists: true); 
+    bool databaseCreated = context.CreateDatabase(); 
     
     
     if (databaseCreated)
