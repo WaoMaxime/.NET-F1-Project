@@ -20,7 +20,7 @@ namespace UI_CA
                 Console.WriteLine("What would you like to do?" +
                                   "\n==========================" +
                                   "\n0) Quit" +
-                                  "\n1) Show all teams" +
+                                  "\n1) Show all team's car's" +
                                   "\n2) Show fastest laps of team" +
                                   "\n3) Show all tyre types" +
                                   "\n4) Show fastest lap with team and/or tyre type" +
@@ -133,13 +133,6 @@ namespace UI_CA
                 }
 
                 var laps = _manager.GetAllFastestLaps();
-                
-                if (laps == null || !laps.Any())
-                {
-                    Console.WriteLine("No fastest laps found.");
-                    return;
-                }
-
                 foreach (var lap in laps)
                 {
                     if (lap.Car == null)
@@ -149,12 +142,15 @@ namespace UI_CA
                     }
 
                     bool driverPositionMatch = !driverPosition.HasValue || lap.Car.DriversPositions == driverPosition.Value;
-                    bool lapTimeMatch = !lapTime.HasValue || Math.Abs((lap.LapTime - lapTime.Value).TotalMilliseconds) < 10;  // Allow slight differences
+                    bool lapTimeMatch = !lapTime.HasValue || Math.Abs((lap.LapTime - lapTime.Value).TotalMilliseconds) < 10;  
 
                     if (driverPositionMatch && lapTimeMatch)
                     {
                         Console.WriteLine(PrintExtentions.PrintFastestLapDetails(lap));
                     }
+
+                    Console.WriteLine("No fastest laps were found.");
+                    break;
                 }
             }
             catch (Exception e)
@@ -162,38 +158,169 @@ namespace UI_CA
                 Console.WriteLine($"Error: {e.Message}. Please try again.");
             }
         }
-
-
-
-
+        
         private void AddNewF1Car()
         {
             try
             {
-                Console.WriteLine("Enter Team (e.g., Mercedes, RedBull, Ferrari):");
-                var team = (F1Team)Enum.Parse(typeof(F1Team), Console.ReadLine());
+                F1Car newCar = new F1Car();
+                        
+                do
+                {
+                    Console.WriteLine("Enter Team (e.g., Mercedes, RedBull, Ferrari):");
+                    var teamInput = Console.ReadLine(); 
+                    if (string.IsNullOrWhiteSpace(teamInput))
+                    { 
+                        Console.WriteLine("You entered a blank team. Please enter a team name"); 
+                        continue;
+                    }
+                    if (Enum.TryParse(teamInput, true, out F1Team teamName) && Enum.IsDefined(typeof(F1Team), teamName)) 
+                    { 
+                        newCar.Team = teamName;
+                        var validationResults = new List<ValidationResult>(); 
+                        var context = new ValidationContext(newCar); 
+                        bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
 
-                Console.WriteLine("Enter Chasis:");
-                string chasis = Console.ReadLine();
+                        if (isValid)
+                        {
+                            break;
+                        }
+                        Console.WriteLine(validationResults[0].ErrorMessage);
+                    }
+                    else
+                    { 
+                        Console.WriteLine("Invalid team name. Please enter a valid F1 team.");
+                    }
+                } while (true);
+                        
+                do
+                {
+                    Console.WriteLine("Enter Chassis Name:");
+                    newCar.Chasis = Console.ReadLine();
+                    
+                    var validationResults = new List<ValidationResult>();
+                    var context = new ValidationContext(newCar);
+                    bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
 
-                Console.WriteLine("Enter Constructors Position:");
-                int constructorsPosition = int.Parse(Console.ReadLine());
+                    if (isValid)
+                    { 
+                        break;
+                    }
+                    Console.WriteLine(validationResults[0].ErrorMessage);
+                } while (true);
+                        
+                do
+                {
+                    Console.WriteLine("Enter Constructors Position (1-10):"); 
+                    if (!int.TryParse(Console.ReadLine(), out int constructorsPosition))
+                    { 
+                        Console.WriteLine("Please enter a valid number of constructors positions.");
+                    }
 
-                Console.WriteLine("Enter Driver Positions:");
-                double driverPositions = double.Parse(Console.ReadLine());
+                    newCar.ConstructorsPosition = constructorsPosition;
 
-                Console.WriteLine("Enter Manufacture Date (yyyy-mm-dd):");
-                DateTime manufactureDate = DateTime.Parse(Console.ReadLine());
+                    var validationResults = new List<ValidationResult>();
+                    var context = new ValidationContext(newCar);
+                    bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
 
-                Console.WriteLine("Enter Tyre Type (Soft, Medium, Hard, Inter, FullWet):");
-                var tyreType = (TyreType)Enum.Parse(typeof(TyreType), Console.ReadLine());
+                    if (isValid)
+                    { 
+                        break;
+                    } 
+                    Console.WriteLine(validationResults[0].ErrorMessage);
+                } while (true);
+                        
+                do
+                {
+                    Console.WriteLine("Enter Driver's Position in Championship (1-20):");
+                    if (!double.TryParse(Console.ReadLine(), out double driverPosition))
+                    { 
+                        Console.WriteLine("Please enter a valid number of driver's position.");
+                    }
 
-                Console.WriteLine("Enter Engine Power (HP) (or leave blank):");
-                string enginePowerInput = Console.ReadLine();
-                double? enginePower = string.IsNullOrEmpty(enginePowerInput) ? (double?)null : double.Parse(enginePowerInput);
+                    newCar.DriversPositions = driverPosition;
+                    var validationResults = new List<ValidationResult>();
+                    var context = new ValidationContext(newCar);
+                    bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
 
-                var newCar = _manager.AddF1Car(team, chasis, constructorsPosition, driverPositions, manufactureDate, tyreType, enginePower);
-                Console.WriteLine($"New F1 Car Added: {PrintExtentions.PrintF1CarDetails(newCar)}");
+                    if (isValid)
+                    { 
+                        break;
+                    }
+                    Console.WriteLine(validationResults[0].ErrorMessage);
+                } while (true);
+                        
+                do
+                {
+                    Console.WriteLine("Enter Manufacture Date (yyyy-mm-dd):");
+                    string dateOfManufactureInput = Console.ReadLine();
+                    if (!DateTime.TryParse(dateOfManufactureInput, out DateTime dateOfManufacture) || dateOfManufacture > DateTime.Now)
+                    { 
+                        Console.WriteLine("You didn't enter a valid date. Please enter a date in format 'yyyy-mm-dd'."); 
+                        continue;
+                    }
+                    
+                    newCar.ManufactureDate = dateOfManufacture;
+
+                    var validationResults = new List<ValidationResult>();
+                    var context = new ValidationContext(newCar);
+                    bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
+
+                    if (isValid)
+                    { 
+                        break;
+                    }
+                    Console.WriteLine(validationResults[0].ErrorMessage);
+                } while (true);
+                        
+                do
+                {
+                    Console.WriteLine("Enter Tyre Type (Soft, Medium, Hard):");
+                    string tyreInput = Console.ReadLine();
+
+                    if (Enum.TryParse(tyreInput, true, out TyreType tyres)) 
+                    {
+                        newCar.Tyres = tyres;
+
+                        var validationResults = new List<ValidationResult>();
+                        var context = new ValidationContext(newCar);
+                        bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
+
+                        if (isValid)
+                        { 
+                            break;
+                        }
+                        Console.WriteLine(validationResults[0].ErrorMessage);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid tyre type. Please enter 'Soft', 'Medium', or 'Hard'.");
+                    }
+                } while (true);
+                        
+                do
+                {
+                    Console.WriteLine("Enter Engine Power (in HP, e.g., 1000):");
+                    if (double.TryParse(Console.ReadLine(), out double enginePower) && enginePower >= 500 && enginePower <= 1500)
+                    { 
+                        newCar.EnginePower = enginePower;
+
+                        var validationResults = new List<ValidationResult>();
+                        var context = new ValidationContext(newCar);
+                        bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
+
+                        if (isValid)
+                        { 
+                            break;
+                        }
+                        Console.WriteLine(validationResults[0].ErrorMessage);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid engine power. Please enter a value between 500 and 1500.");
+                    } 
+                } while (true);
+                Console.WriteLine($"New F1Car Added: {PrintExtentions.PrintF1CarDetails(newCar)}");
             }
             catch (Exception ex)
             {
@@ -206,119 +333,348 @@ namespace UI_CA
         {
             try
             {
+                FastestLap lap = new FastestLap();
                 string circuit;
+                int airTemperature, trackTemperature;
+                TimeSpan lapTime = TimeSpan.Zero;
+                DateTime dateOfRecord;
+                
                 do
                 {
                     Console.WriteLine("Enter Circuit Name (min 3 characters, max 50):");
                     circuit = Console.ReadLine();
-                } while (string.IsNullOrWhiteSpace(circuit) || circuit.Length < 3 || circuit.Length > 50);
-                
-                int airTemperature;
-                do
-                {
-                    Console.WriteLine("Enter Air Temperature (between -30 and 50 degrees Celsius):");
-                } while (!int.TryParse(Console.ReadLine(), out airTemperature) || airTemperature < -30 || airTemperature > 50);
-                
-                int trackTemperature;
-                do
-                {
-                    Console.WriteLine("Enter Track Temperature (between -30 and 70 degrees Celsius):");
-                } while (!int.TryParse(Console.ReadLine(), out trackTemperature) || trackTemperature < -30 || trackTemperature > 70);
-                
-                TimeSpan lapTime;
-                do
-                {
-                    Console.WriteLine("Enter Lap Time (in the format 'minutes.seconds.milliseconds', e.g., 1.40.564):");
-                    string lapTimeInput = Console.ReadLine();
-                    string[] parts = lapTimeInput.Split('.');
-                    if (parts.Length == 3 &&
-                        int.TryParse(parts[0], out int minutes) &&
-                        int.TryParse(parts[1], out int seconds) &&
-                        int.TryParse(parts[2], out int milliseconds))
+                    var circuitOnly = new FastestLap { Circuit = circuit };
+                    var validationResults = new List<ValidationResult>();
+                    var circuitContext = new ValidationContext(circuitOnly);
+
+                    bool isValid = Validator.TryValidateObject(circuitOnly, circuitContext, validationResults, true);
+
+                    if (!isValid)
                     {
-                        lapTime = new TimeSpan(0, 0, minutes, seconds, milliseconds);
-                        break;
+                        Console.WriteLine(validationResults[0].ErrorMessage);
                     }
                     else
                     {
-                        Console.WriteLine("Invalid format. Please enter the lap time in 'minutes.seconds.milliseconds'.");
+                        lap.Circuit = circuitOnly.Circuit;
+                        break;
                     }
                 } while (true);
                 
-                DateTime dateOfRecord;
                 do
                 {
-                    Console.WriteLine("Enter Date of Record (yyyy-mm-dd):");
-                } while (!DateTime.TryParse(Console.ReadLine(), out dateOfRecord) || dateOfRecord > DateTime.Now);
-                
-                F1Car car = null;
-                do
-                {
-                    Console.WriteLine("Enter the ID of the car used (or type 'new' to add a new car):");
-                    string carInput = Console.ReadLine();
+                    Console.WriteLine("Enter Air Temperature (between -30 and 50 degrees Celsius):");
+                    string airTempInput = Console.ReadLine();
 
-                    if (carInput.ToLower() == "new")
+                    if (!int.TryParse(airTempInput, out airTemperature))
                     {
-                        F1Team team;
-                        do
-                        {
-                            Console.WriteLine("Enter Team (e.g., RedBull, Mercedes, etc.):");
-                        } while (!Enum.TryParse<F1Team>(Console.ReadLine(), out team));
+                        Console.WriteLine("You didn't enter a valid number. Please enter a number.");
+                        continue;
+                    }
 
-                        Console.WriteLine("Enter Chassis Name:");
-                        string chassis = Console.ReadLine();
+                    var tempLap = new FastestLap { AirTemperature = airTemperature };
+                    var validationResults = new List<ValidationResult>();  
+                    var context = new ValidationContext(tempLap);
+                    tempLap.Circuit = circuit;
 
-                        int constructorsPosition;
-                        do
-                        {
-                            Console.WriteLine("Enter Constructors Position (1-10):");
-                        } while (!int.TryParse(Console.ReadLine(), out constructorsPosition) || constructorsPosition < 1 || constructorsPosition > 10);
+                    bool isValid = Validator.TryValidateObject(tempLap, context, validationResults, true);
 
-                        double driversPosition;
-                        do
-                        {
-                            Console.WriteLine("Enter Driver's Position in Championship (1-20):");
-                        } while (!double.TryParse(Console.ReadLine(), out driversPosition) || driversPosition < 1 || driversPosition > 20);
-
-                        DateTime manufactureDate;
-                        do
-                        {
-                            Console.WriteLine("Enter Manufacture Date (yyyy-mm-dd):");
-                        } while (!DateTime.TryParse(Console.ReadLine(), out manufactureDate) || manufactureDate > DateTime.Now);
-
-                        TyreType tyres;
-                        do
-                        {
-                            Console.WriteLine("Enter Tyre Type (Soft, Medium, Hard):");
-                        } while (!Enum.TryParse<TyreType>(Console.ReadLine(), out tyres));
-
-                        double enginePower;
-                        do
-                        {
-                            Console.WriteLine("Enter Engine Power (in HP, e.g., 1000):");
-                        } while (!double.TryParse(Console.ReadLine(), out enginePower) || enginePower < 500 || enginePower > 1500);
-
-                        // Create a new car
-                        car = new F1Car(team, chassis, constructorsPosition, driversPosition, manufactureDate, tyres, enginePower);
+                    if (!isValid)
+                    {
+                        Console.WriteLine(validationResults[0].ErrorMessage);
+                    }
+                    else
+                    {
+                        lap.AirTemperature = tempLap.AirTemperature;
                         break;
                     }
-                    else if (int.TryParse(carInput, out int carId))
+                } while (true);
+                
+                do
+                {
+                    Console.WriteLine("Enter Track Temperature (between -30 and 50 degrees Celsius):");
+                    string trackTempInput = Console.ReadLine();
+
+                    if (!int.TryParse(trackTempInput, out trackTemperature))
                     {
-                        car = _manager.GetF1Car(carId);
-                        if (car != null)
+                        Console.WriteLine("You didn't enter a valid number. Please enter a number.");
+                        continue;
+                    }
+
+                    var trackTemplap = new FastestLap { TrackTemperature = trackTemperature };
+                    var validationResults = new List<ValidationResult>();  
+                    var context = new ValidationContext(trackTemplap);
+                    trackTemplap.AirTemperature = airTemperature;
+
+                    bool isValid = Validator.TryValidateObject(trackTemplap, context, validationResults, true);
+
+                    if (!isValid)
+                    {
+                        Console.WriteLine(validationResults[0].ErrorMessage);
+                    }
+                    else
+                    {
+                        lap.TrackTemperature = trackTemplap.TrackTemperature;
+                        break;
+                    }
+                } while (true);
+                
+                do
+                {
+                    Console.WriteLine("Enter Lap Time (format 'm.sss.msmsms', e.g., 1.40.564):");
+                    string lapTimeInput = Console.ReadLine();
+
+                    if (string.IsNullOrWhiteSpace(lapTimeInput))
+                    {
+                        var timeLap = new FastestLap { LapTime = lapTime };
+                        var validationResults = new List<ValidationResult>();
+                        var context = new ValidationContext(timeLap);
+                        timeLap.TrackTemperature = trackTemperature;
+
+                        bool isValid = Validator.TryValidateObject(timeLap, context, validationResults, true);
+
+                        if (!isValid)
                         {
-                            break;
+                            Console.WriteLine(validationResults[0].ErrorMessage); 
+                        }
+                    }
+                    else
+                    {
+                        string[] parts = lapTimeInput.Split('.');
+                        if (parts.Length == 3 &&
+                            int.TryParse(parts[0], out int minutes) &&
+                            int.TryParse(parts[1], out int seconds) &&
+                            int.TryParse(parts[2], out int milliseconds))
+                        {
+                            if (seconds < 60 && milliseconds < 1000)
+                            {
+                                lapTime = new TimeSpan(0, 0, minutes, seconds, milliseconds);
+                                lap.LapTime = lapTime;
+                                break; 
+                            }
+                            Console.WriteLine("Seconds must be less than 60, milliseconds less than 1000.");
                         }
                         else
                         {
-                            Console.WriteLine("No car found with the given ID. Please try again.");
+                            Console.WriteLine("Invalid format. Please enter the lap time in 'm.sss.msmsms' format.");
                         }
                     }
                 } while (true);
                 
-                var newLap = _manager.AddFastestLap(circuit, airTemperature, trackTemperature, lapTime, dateOfRecord, car);
+                do
+                {
+                    Console.WriteLine("Enter Date of Record (yyyy-mm-dd):");
+                    string lapTimeInput = Console.ReadLine();
+                    if (!DateTime.TryParse(lapTimeInput, out dateOfRecord) || dateOfRecord > DateTime.Now)
+                    {
+                        Console.WriteLine("You didn't enter a valid date. Please enter a date in format 'yyyy-mm-dd'.");
+                        continue;
+                    }
+                    
+                    var recordDate = new FastestLap { DateOfRecord = dateOfRecord };
+                    var validationResults = new List<ValidationResult>();
+                    var context = new ValidationContext(recordDate);
+                    recordDate.LapTime = lapTime;
+                    
+                    bool isValid = Validator.TryValidateObject(recordDate, context, validationResults, true);
+
+                    if (!isValid)
+                    { 
+                        Console.WriteLine(validationResults[0].ErrorMessage);
+                    }
+                    else
+                    { 
+                        lap.DateOfRecord = recordDate.DateOfRecord; 
+                        break;
+                    }
+                } while (true);
                 
-                Console.WriteLine($"New Fastest Lap Added: {PrintExtentions.PrintFastestLapDetails(newLap)}");
+                do
+                {
+                    Console.WriteLine("Enter the name of the car (or type 'new' to add a new car):");
+                    string carInput = Console.ReadLine();
+                    if (string.IsNullOrWhiteSpace(carInput))
+                    {
+                        Console.WriteLine("You didn't enter a valid name. Please enter a name or type 'new'.");
+                        continue;
+                    }
+
+                    if (carInput.ToLower() == "new")
+                    {
+                        F1Car newCar = new F1Car();
+                        
+                        do
+                        {
+                            Console.WriteLine("Enter Team (e.g., Mercedes, RedBull, Ferrari):");
+                            var teamInput = Console.ReadLine();
+                            if (string.IsNullOrWhiteSpace(teamInput))
+                            {
+                                Console.WriteLine("You entered a blank team. Please enter a team name");
+                                continue;
+                            }
+
+                            if (Enum.TryParse(teamInput, true, out F1Team teamName) && Enum.IsDefined(typeof(F1Team), teamName))
+                            {
+                                newCar.Team = teamName;
+                                
+                                var validationResults = new List<ValidationResult>();
+                                var context = new ValidationContext(newCar);
+                                bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
+
+                                if (isValid)
+                                {
+                                    break;
+                                }
+                                Console.WriteLine(validationResults[0].ErrorMessage);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid team name. Please enter a valid F1 team.");
+                            }
+                        } while (true);
+                        
+                        do
+                        {
+                            Console.WriteLine("Enter Chassis Name:");
+                            newCar.Chasis = Console.ReadLine();
+
+                            var validationResults = new List<ValidationResult>();
+                            var context = new ValidationContext(newCar);
+                            bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
+
+                            if (isValid)
+                            {
+                                break;
+                            }
+                            Console.WriteLine(validationResults[0].ErrorMessage);
+                        } while (true);
+                        
+                        do
+                        {
+                            Console.WriteLine("Enter Constructors Position (1-10):");
+                            if (!int.TryParse(Console.ReadLine(), out int constructorsPosition))
+                            {
+                                Console.WriteLine("Please enter a valid number of constructors positions.");
+                            }
+
+                            newCar.ConstructorsPosition = constructorsPosition;
+
+                            var validationResults = new List<ValidationResult>();
+                            var context = new ValidationContext(newCar);
+                            bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
+
+                            if (isValid)
+                            { 
+                                break;
+                            }
+                            Console.WriteLine(validationResults[0].ErrorMessage);
+                        } while (true);
+                        
+                        do
+                        {
+                            Console.WriteLine("Enter Driver's Position in Championship (1-20):");
+                            if (!double.TryParse(Console.ReadLine(), out double driverPosition))
+                            {
+                                Console.WriteLine("Please enter a valid number of driver's position.");
+                            }
+
+                            newCar.DriversPositions = driverPosition;
+                            var validationResults = new List<ValidationResult>();
+                            var context = new ValidationContext(newCar);
+                            bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
+
+                            if (isValid)
+                            { 
+                                break;
+                            }
+                            Console.WriteLine(validationResults[0].ErrorMessage);
+                        } while (true);
+                        
+                        do
+                        {
+                            Console.WriteLine("Enter Manufacture Date (yyyy-mm-dd):");
+                            string dateOfManufactureInput = Console.ReadLine();
+                            if (!DateTime.TryParse(dateOfManufactureInput, out DateTime dateOfManufacture) || dateOfRecord > DateTime.Now)
+                            {
+                                Console.WriteLine("You didn't enter a valid date. Please enter a date in format 'yyyy-mm-dd'.");
+                                continue;
+                            }
+                    
+                            newCar.ManufactureDate = dateOfManufacture;
+
+                            var validationResults = new List<ValidationResult>();
+                            var context = new ValidationContext(newCar);
+                            bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
+
+                            if (isValid)
+                            {
+                                break;
+                            }
+                            Console.WriteLine(validationResults[0].ErrorMessage);
+                        } while (true);
+                        
+                        do
+                        {
+                            Console.WriteLine("Enter Tyre Type (Soft, Medium, Hard):");
+                            string tyreInput = Console.ReadLine();
+
+                            if (Enum.TryParse(tyreInput, true, out TyreType tyres))
+                            {
+                                newCar.Tyres = tyres;
+
+                                var validationResults = new List<ValidationResult>();
+                                var context = new ValidationContext(newCar);
+                                bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
+
+                                if (isValid)
+                                {
+                                    break;
+                                }
+                                else
+                                {
+                                    Console.WriteLine(validationResults[0].ErrorMessage);
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid tyre type. Please enter 'Soft', 'Medium', or 'Hard'.");
+                            }
+                        } while (true);
+                        
+                        do
+                        {
+                            Console.WriteLine("Enter Engine Power (in HP, e.g., 1000):");
+                            if (double.TryParse(Console.ReadLine(), out double enginePower) && enginePower >= 500 && enginePower <= 1500)
+                            {
+                                newCar.EnginePower = enginePower;
+
+                                var validationResults = new List<ValidationResult>();
+                                var context = new ValidationContext(newCar);
+                                bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
+
+                                if (isValid)
+                                {
+                                    break;
+                                }
+                                Console.WriteLine(validationResults[0].ErrorMessage);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid engine power. Please enter a value between 500 and 1500.");
+                            }
+                        } while (true);
+                        
+                        var newLap = _manager.AddFastestLap(circuit, airTemperature, trackTemperature, lapTime, dateOfRecord, newCar);
+                        Console.WriteLine($"New Fastest Lap Added: {PrintExtentions.PrintFastestLapDetails(newLap)}");
+                        break;
+                    }
+                    if (Enum.TryParse(carInput, true, out F1Team existingTeam) && Enum.IsDefined(typeof(F1Team), existingTeam))
+                    {
+                        var newLap = _manager.AddFastestLap(circuit, airTemperature, trackTemperature, lapTime, dateOfRecord, _manager.GetF1CarsByTeam(existingTeam).FirstOrDefault());
+                        Console.WriteLine($"New Fastest Lap Added: {PrintExtentions.PrintFastestLapDetails(newLap)}");
+                        break;
+                    }
+                    Console.WriteLine("No car found with the given name. Please try again.");
+                } while (true);
             }
             catch (Exception ex)
             {

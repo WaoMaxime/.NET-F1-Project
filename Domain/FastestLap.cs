@@ -21,14 +21,11 @@ namespace Domain
 
         [Required(ErrorMessage = "Date of record is required.")]
         public DateTime DateOfRecord { get; set; }
-
-        [Required(ErrorMessage = "A car is required for the fastest lap.")]
+        
         public F1Car Car { get; set; }
 
         public int CarId { get; set; }  
-
-        public FastestLap() { }
-
+        
         public FastestLap(string circuit, int airTemperature, int trackTemperature, TimeSpan lapTime,
             DateTime dateOfRecord, F1Car car)
         {
@@ -39,6 +36,16 @@ namespace Domain
             DateOfRecord = dateOfRecord;
             Car = car;
             CarId = car.Id;  
+        }
+
+        public FastestLap()
+        {
+            Circuit = "Dummy";
+            AirTemperature = 20;
+            TrackTemperature = 20;
+            DateTime.Now.AddDays(-10); 
+            LapTime = new TimeSpan(0, 1, 19, 567);
+            Car = new F1Car();
         }
     }
 

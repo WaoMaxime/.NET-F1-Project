@@ -50,9 +50,7 @@ public static class DataSeeder
         
         context.F1Cars.AddRange(car1, car2);
         context.FastestLaps.AddRange(lap1, lap2);
-        
         context.SaveChanges();
-        
         context.ChangeTracker.Clear();
     }
 }

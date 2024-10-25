@@ -21,7 +21,7 @@ namespace Domain
 {
     public int Id { get; set; }
 
-    [Required(ErrorMessage = "Team is required.")]
+    [Required(ErrorMessage = "existing F1Team is required.")]
     public F1Team Team { get; set; }
 
     [Required(ErrorMessage = "Chasis name is required.")]
@@ -54,6 +54,18 @@ namespace Domain
         ManufactureDate = manufactureDate;
         EnginePower = enginePower;
         Tyres = tyres;
+        FastestLaps = new List<FastestLap>();
+    }
+
+    public F1Car()
+    {
+        Team = F1Team.Mercedes;
+        Chasis = "dummy";
+        ConstructorsPosition = 1;
+        DriversPositions = 1; 
+        ManufactureDate = DateTime.Now;
+        EnginePower = 501;
+        Tyres = TyreType.Soft;
         FastestLaps = new List<FastestLap>();
     }
 

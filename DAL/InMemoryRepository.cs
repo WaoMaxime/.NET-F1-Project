@@ -4,8 +4,8 @@ namespace DataAccessLayer
 {
     public class InMemoryRepository : IRepository
     {
-        public static List<FastestLap> FastestLaps = new List<FastestLap>();
-        public static List<F1Car> F1Cars = new List<F1Car>();
+        public static List<FastestLap> FastestLaps;
+        public static List<F1Car> F1Cars;
         
         public static void Seed()
         {
