@@ -4,6 +4,7 @@ namespace Domain
 {
     public class FastestLap
     {
+        [Key]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Circuit name is required.")]

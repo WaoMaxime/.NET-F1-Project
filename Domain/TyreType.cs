@@ -8,7 +8,6 @@ public enum TyreType
     Inter,
     FullWet
 }
-
 public static class TyreTypeExtensions
 {
     public static string ToFriendlyString(this TyreType tyreType)

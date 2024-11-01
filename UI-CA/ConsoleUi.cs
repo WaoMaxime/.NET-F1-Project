@@ -149,8 +149,11 @@ namespace UI_CA
                         Console.WriteLine(PrintExtentions.PrintFastestLapDetails(lap));
                     }
 
-                    Console.WriteLine("No fastest laps were found.");
-                    break;
+                    if (!driverPositionMatch || !lapTimeMatch)
+                    {
+                        Console.WriteLine("No fastest laps were found.");
+                        break;
+                    }
                 }
             }
             catch (Exception e)
@@ -321,6 +324,7 @@ namespace UI_CA
                     } 
                 } while (true);
                 Console.WriteLine($"New F1Car Added: {PrintExtentions.PrintF1CarDetails(newCar)}");
+                _manager.AddF1Car(newCar.Team, newCar.Chasis,newCar.ConstructorsPosition,newCar.DriversPositions,newCar.ManufactureDate,newCar.Tyres,newCar.EnginePower);
             }
             catch (Exception ex)
             {
@@ -662,7 +666,7 @@ namespace UI_CA
                                 Console.WriteLine("Invalid engine power. Please enter a value between 500 and 1500.");
                             }
                         } while (true);
-                        
+                        _manager.AddF1Car(newCar.Team, newCar.Chasis,newCar.ConstructorsPosition,newCar.DriversPositions,newCar.ManufactureDate,newCar.Tyres,newCar.EnginePower);
                         var newLap = _manager.AddFastestLap(circuit, airTemperature, trackTemperature, lapTime, dateOfRecord, newCar);
                         Console.WriteLine($"New Fastest Lap Added: {PrintExtentions.PrintFastestLapDetails(newLap)}");
                         break;

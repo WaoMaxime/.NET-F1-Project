@@ -19,6 +19,7 @@ namespace Domain
 
     public class F1Car : IValidatableObject
 {
+    [Key]
     public int Id { get; set; }
 
     [Required(ErrorMessage = "existing F1Team is required.")]
