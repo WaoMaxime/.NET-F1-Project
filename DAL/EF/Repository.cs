@@ -20,12 +20,12 @@ public class Repository : IRepository
     
     public IEnumerable<FastestLap> ReadAllFastestLaps()
     {
-        return _context.FastestLaps.Include(lap => lap.Car).ToList();
+        return _context.FastestLaps;
     }
     
     public IEnumerable<FastestLap> ReadFastestLapsByCircuit(string circuit)
     {
-        return _context.FastestLaps.Where(lap => lap.Circuit == circuit).ToList();
+        return _context.FastestLaps.Where(lap => lap.Circuit == circuit);
     }
     
     public void CreateFastestLap(FastestLap lap)
@@ -41,12 +41,12 @@ public class Repository : IRepository
     
     public IEnumerable<F1Car> ReadAllF1Cars()
     {
-        return _context.F1Cars.ToList();
+        return _context.F1Cars;
     }
     
     public IEnumerable<F1Car> ReadF1CarsByTeam(F1Team team)
     {
-        return _context.F1Cars.Where(car => car.Team == team).ToList();
+        return _context.F1Cars.Where(car => car.Team == team);
     }
     
     public void CreateF1Car(F1Car car)

@@ -55,9 +55,14 @@ namespace UI_CA
         private void ShowAllTeams()
         {
             var cars = _manager.GetAllF1Cars();
+            var uniqueCars = new HashSet<string>();
+
             foreach (var car in cars)
             {
-                Console.WriteLine(PrintExtentions.PrintF1CarDetails(car));
+                if (uniqueCars.Add(car.Chasis))
+                {
+                    Console.WriteLine(PrintExtentions.PrintF1CarDetails(car));
+                }
             }
         }
 
@@ -491,7 +496,6 @@ namespace UI_CA
                         break;
                     }
                 } while (true);
-                
                 do
                 {
                     Console.WriteLine("Enter the name of the car (or type 'new' to add a new car):");
@@ -633,10 +637,7 @@ namespace UI_CA
                                 {
                                     break;
                                 }
-                                else
-                                {
-                                    Console.WriteLine(validationResults[0].ErrorMessage);
-                                }
+                                Console.WriteLine(validationResults[0].ErrorMessage);
                             }
                             else
                             {
@@ -668,6 +669,7 @@ namespace UI_CA
                         } while (true);
                         _manager.AddF1Car(newCar.Team, newCar.Chasis,newCar.ConstructorsPosition,newCar.DriversPositions,newCar.ManufactureDate,newCar.Tyres,newCar.EnginePower);
                         var newLap = _manager.AddFastestLap(circuit, airTemperature, trackTemperature, lapTime, dateOfRecord, newCar);
+                        Console.WriteLine($"New Car Added: {PrintExtentions.PrintF1CarDetails(newCar)}");
                         Console.WriteLine($"New Fastest Lap Added: {PrintExtentions.PrintFastestLapDetails(newLap)}");
                         break;
                     }

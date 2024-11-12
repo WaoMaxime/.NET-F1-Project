@@ -43,7 +43,7 @@ namespace Domain
 
     [Range(500, 1500, ErrorMessage = "Engine Power must be between 500 and 1500 HP.")]
     public double? EnginePower { get; set; }
-    
+    [NotMapped]
     public ICollection<FastestLap> FastestLaps { get; set; }
 
     public F1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, double? enginePower = null)
