@@ -16,8 +16,8 @@
 
     public class ConsoleUi
     {
-        private List<F1Car> _cars;
-        private List<FastestLap> _laps;
+        private List<F1Car>? _cars;
+        private List<FastestLap>? _laps;
 
         public ConsoleUi()
         {
@@ -97,13 +97,12 @@
         private void ShowFastestLapsByTeam()
         {
             Console.WriteLine("Enter (part of) a TeamName");
-            string teamName = Console.ReadLine();
+            string? teamName = Console.ReadLine();
 
-            if (teamName!= "")
+            if (teamName != String.Empty)
             {
                 foreach (var lap in _laps)
                 {
-                    // Check if the input teamName is a substring of the team's name (case-insensitive)
                     if (lap.Car.Team.ToString().IndexOf(teamName, StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         Console.WriteLine(lap.ToString());

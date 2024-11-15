@@ -29,28 +29,41 @@ public static class DataSeeder
             tyres: TyreType.Medium,
             enginePower: 980
         );
+
+        context.F1Cars.AddRange(car1, car2);
+        context.SaveChanges();
+        
+        var linkedCar1 = context.F1Cars.FirstOrDefault(c => c.Chasis == "RB19");
+        var linkedCar2 = context.F1Cars.FirstOrDefault(c => c.Chasis == "W14");
+
+        if (linkedCar1 == null || linkedCar2 == null)
+        {
+            Console.WriteLine("Error: Unable to retrieve cars for linking with FastestLap entities.");
+            return;
+        }
         
         var lap1 = new FastestLap(
             circuit: "Monaco",
             airTemperature: 25,
             trackTemperature: 30,
-            lapTime: new TimeSpan(0, 0, 1, 9,268),  
+            lapTime: new TimeSpan(0, 0, 1, 9, 268),
             dateOfRecord: new DateTime(2023, 5, 29),
-            car: car1
+            car: linkedCar1
         );
 
         var lap2 = new FastestLap(
             circuit: "Silverstone",
             airTemperature: 20,
             trackTemperature: 25,
-            lapTime: new TimeSpan(0, 0, 1, 40,854),
+            lapTime: new TimeSpan(0, 0, 1, 40, 854),
             dateOfRecord: new DateTime(2023, 6, 11),
-            car: car2
+            car: linkedCar2 
         );
         
-        context.F1Cars.AddRange(car1, car2);
         context.FastestLaps.AddRange(lap1, lap2);
         context.SaveChanges();
+        
         context.ChangeTracker.Clear();
     }
+
 }

@@ -27,14 +27,20 @@ namespace DataAccessLayer
             });
         }
         
-        public FastestLap ReadFastestLap(int id)
+        public FastestLap ReadFastestLap(TimeSpan lapTime)
         {
-            return FastestLaps.FirstOrDefault(lap => lap.Id == id);
+            return FastestLaps.FirstOrDefault(l => l.LapTime == lapTime );
         }
 
         public IEnumerable<FastestLap> ReadAllFastestLaps()
         {
             return FastestLaps;
+        }
+        
+        public IEnumerable<FastestLap> ReadFastestLapsByPartialTime(TimeSpan partialLapTime)
+        {
+            return FastestLaps.Where(lap => lap.LapTime.Minutes == partialLapTime.Minutes &&
+                                                     lap.LapTime.Seconds / 10 == partialLapTime.Seconds / 10);
         }
 
         public IEnumerable<FastestLap> ReadFastestLapsByCircuit(string circuit)

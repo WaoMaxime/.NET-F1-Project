@@ -23,11 +23,10 @@ namespace UI_CA
                                   "\n1) Show all team's car's" +
                                   "\n2) Show fastest laps of team" +
                                   "\n3) Show all tyre types" +
-                                  "\n4) Show fastest lap with team and/or tyre type" +
+                                  "\n4) Show fastest lap from circuit and/or the driven laptime" +
                                   "\n5) Add a new F1 Car" +
                                   "\n6) Add a new Fastest Lap" +
                                   "\nChoice (0-6):");
-
                 switch (Console.ReadLine())
                 {
                     case "1":
@@ -71,18 +70,36 @@ namespace UI_CA
             Console.WriteLine("Enter (part of) a Team Name:");
             string teamName = Console.ReadLine();
 
-            if (!string.IsNullOrEmpty(teamName))
+            if (string.IsNullOrWhiteSpace(teamName))
             {
-                var laps = _manager.GetAllFastestLaps();
-                foreach (var lap in laps)
+                Console.WriteLine("Team name cannot be empty. Please try again.");
+                return;
+            }
+
+            var laps = _manager.GetAllFastestLaps();
+            var matchingLaps = new List<FastestLap>();
+
+            foreach (var lap in laps)
+            {
+                if (lap.Car.Team.ToString().IndexOf(teamName, StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    if (lap.Car.Team.ToString().IndexOf(teamName, StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        Console.WriteLine(PrintExtentions.PrintFastestLapDetails(lap));
-                    }
+                    matchingLaps.Add(lap);
                 }
             }
+            if (matchingLaps.Count > 0)
+            {
+                foreach (var lap in matchingLaps)
+                {
+                    Console.WriteLine(PrintExtentions.PrintFastestLapDetails(lap));
+                }
+            }
+            else
+            {
+                Console.WriteLine($"No fastest laps found for team name containing: \"{teamName}\".");
+            }
         }
+
+
 
         public void ShowTyreTypes()
         {
@@ -97,90 +114,103 @@ namespace UI_CA
 
         private void FilterLaps()
         {
-            try
+            
+            FastestLap fastestLap = new FastestLap();
+            string circuitName;
+            string lapTimeInput;
+            TimeSpan lapTime = new TimeSpan();
+            do
             {
-                FastestLap fastestLap = new FastestLap();
-                string circuitName;
-                string lapTimeInput;
-                do
+                Console.WriteLine("Enter the Circuit of the lap or leave blank:");
+                circuitName = Console.ReadLine();
+
+                if (!string.IsNullOrEmpty(circuitName)) 
                 {
-                    Console.WriteLine("Enter the Circuit of the lap or leave blank:");
-                    circuitName = Console.ReadLine();
+                    fastestLap.Circuit = circuitName;
 
-                    if (!string.IsNullOrEmpty(circuitName)) 
-                    {
-                        fastestLap.Circuit = circuitName;
+                    var validationResults = new List<ValidationResult>();
+                    var context = new ValidationContext(fastestLap);
+                    bool isValid = Validator.TryValidateObject(fastestLap, context, validationResults, true);
 
-                        var validationResults = new List<ValidationResult>();
-                        var context = new ValidationContext(fastestLap);
-                        bool isValid = Validator.TryValidateObject(fastestLap, context, validationResults, true);
-
-                        if (isValid)
-                        { 
-                            break;
-                        }
-                        Console.WriteLine(validationResults[0].ErrorMessage);
-                    }
-                    else
-                    {
+                    if (isValid)
+                    { 
                         break;
                     }
-                } while (true);
-                
-                do
+                    Console.WriteLine(validationResults[0].ErrorMessage);
+                }
+                else
                 {
-                    Console.WriteLine("Enter a Lap Time (in the format 'minutes.seconds.milliseconds', e.g., 1.40.800) or leave blank:"); 
-                    lapTimeInput = Console.ReadLine();
+                    break;
+                }
+            } while (true);
+                
+            do
+            {
+                Console.WriteLine("Enter a Lap Time (in the format 'minutes.seconds.milliseconds', e.g., 1.40.800) or leave blank:"); 
+                lapTimeInput = Console.ReadLine();
 
-                    if (!string.IsNullOrEmpty(lapTimeInput)) 
-                    {
-                        string[] parts = lapTimeInput.Split('.');
-                        int.TryParse(parts[0], out int minutes);
-                        int.TryParse(parts[1], out int seconds);
-                        int.TryParse(parts[2], out int milliseconds);
-                        TimeSpan lapTime = new TimeSpan(0, 0, minutes, seconds, milliseconds);
+                if (!string.IsNullOrEmpty(lapTimeInput)) 
+                {
+                    string[] parts = lapTimeInput.Split('.');
+                    int.TryParse(parts[0], out int minutes);
+                    int.TryParse(parts[1], out int seconds);
+                    int.TryParse(parts[2], out int milliseconds);
+                    lapTime = new TimeSpan(0, 0, minutes, seconds, milliseconds);
 
-                        var validationResults = new List<ValidationResult>();
-                        var context = new ValidationContext(lapTime);
-                        bool isValid = Validator.TryValidateObject(lapTime, context, validationResults, true);
+                    var validationResults = new List<ValidationResult>();
+                    var context = new ValidationContext(lapTime);
+                    bool isValid = Validator.TryValidateObject(lapTime, context, validationResults, true);
 
-                        if (isValid)
-                        { 
-                            break;
-                        }
-                        Console.WriteLine(validationResults[0].ErrorMessage);
-                    }
-                    else
-                    {
+                    if (isValid)
+                    { 
                         break;
                     }
-                } while (true);
-
-                if (circuitName == String.Empty && lapTimeInput == String.Empty)
-                {
-                    var laps = _manager.GetAllFastestLaps();
-                    foreach (var lap in laps)
-                    {
-                        Console.WriteLine(PrintExtentions.PrintFastestLapDetails(lap));
-                    }
+                    Console.WriteLine(validationResults[0].ErrorMessage);
                 }
-
-                if (circuitName == String.Empty)
+                else
                 {
-                    
+                    break;
                 }
+            } while (true);
+
+            if (circuitName == String.Empty && lapTimeInput != String.Empty)
+            {
+                if (_manager.GetFastestLapByTime(lapTime) == null)
+                {
+                    Console.WriteLine("No fastest laps found.");
+                    return;
+                }
+                Console.WriteLine(PrintExtentions.PrintFastestLapDetails(_manager.GetFastestLapByTime(lapTime)));
+            }
                 
-                if (lapTimeInput == String.Empty)
+            if (lapTimeInput == String.Empty && circuitName != String.Empty)
+            {
+                var laps = _manager.GetFastestLapsByCircuit(circuitName);
+                if (laps.Any() == false)
                 {
-                    
+                    Console.WriteLine("No fastest laps found.");
+                    return;
+                }
+                foreach (var lap in laps)
+                {
+                    Console.WriteLine(PrintExtentions.PrintFastestLapDetails(lap));
                 }
             }
-            catch (Exception e)
+            
+            if (circuitName == String.Empty && lapTimeInput == String.Empty)
             {
-                Console.WriteLine($"Error: {e.Message}. Please try again.");
+                var laps = _manager.GetAllFastestLaps();
+                if (laps.Any() == false)
+                {
+                    Console.WriteLine("No fastest laps found.");
+                    return;
+                }
+                foreach (var lap in laps)
+                {
+                    Console.WriteLine(PrintExtentions.PrintFastestLapDetails(lap));
+                }
             }
         }
-        
         private void AddNewF1Car()
         {
             try
@@ -297,7 +327,7 @@ namespace UI_CA
                         
                 do
                 {
-                    Console.WriteLine("Enter Tyre Type (Soft, Medium, Hard):");
+                    Console.WriteLine("Enter Tyre Type (Soft, Medium, Hard, Inter or Fullwet):");
                     string tyreInput = Console.ReadLine();
 
                     if (Enum.TryParse(tyreInput, true, out TyreType tyres)) 
@@ -598,7 +628,6 @@ namespace UI_CA
                             {
                                 Console.WriteLine("Please enter a valid number of driver's position.");
                             }
-
                             newCar.DriversPositions = driverPosition;
                             var validationResults = new List<ValidationResult>();
                             var context = new ValidationContext(newCar);
@@ -681,7 +710,6 @@ namespace UI_CA
                                 Console.WriteLine("Invalid engine power. Please enter a value between 500 and 1500.");
                             }
                         } while (true);
-                        _manager.AddF1Car(newCar.Team, newCar.Chasis,newCar.ConstructorsPosition,newCar.DriversPositions,newCar.ManufactureDate,newCar.Tyres,newCar.EnginePower);
                         var newLap = _manager.AddFastestLap(circuit, airTemperature, trackTemperature, lapTime, dateOfRecord, newCar);
                         Console.WriteLine($"New Car Added: {PrintExtentions.PrintF1CarDetails(newCar)}");
                         Console.WriteLine($"New Fastest Lap Added: {PrintExtentions.PrintFastestLapDetails(newLap)}");

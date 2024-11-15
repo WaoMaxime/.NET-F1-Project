@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DataAccessLayer.EF;
 
 public class Repository : IRepository
-{
+{   
     private readonly F1CarDbContext _context;
     
     public Repository(F1CarDbContext context)
@@ -13,9 +13,9 @@ public class Repository : IRepository
         _context = context;
     }
     
-    public FastestLap ReadFastestLap(int id)
+    public FastestLap ReadFastestLap(TimeSpan lapTime)
     {
-        return _context.FastestLaps.Find(id);
+        return _context.FastestLaps.FirstOrDefault(l => l.LapTime == lapTime);
     }
     
     public IEnumerable<FastestLap> ReadAllFastestLaps()

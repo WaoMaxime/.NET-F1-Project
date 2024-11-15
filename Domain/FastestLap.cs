@@ -22,7 +22,7 @@ namespace Domain
 
         [Required(ErrorMessage = "Date of record is required.")]
         public DateTime DateOfRecord { get; set; }
-        
+        [Required(ErrorMessage = "An existing car is required.")]
         public F1Car Car { get; set; }
 
         public int CarId { get; set; }  
@@ -35,8 +35,8 @@ namespace Domain
             TrackTemperature = trackTemperature;
             LapTime = lapTime;
             DateOfRecord = dateOfRecord;
-            Car = car;
             CarId = car.Id;  
+            Car = car;
         }
 
         public FastestLap()

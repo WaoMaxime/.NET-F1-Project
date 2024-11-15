@@ -4,7 +4,7 @@ namespace BusinessLayer
 {
     public interface IManager
     {
-        FastestLap GetFastestLap(int id);
+        FastestLap GetFastestLapByTime(TimeSpan lapTime);
         IEnumerable<FastestLap> GetAllFastestLaps();
         IEnumerable<FastestLap> GetFastestLapsByCircuit(string circuit);
         FastestLap AddFastestLap(string circuit, int airTemperature, int trackTemperature, TimeSpan lapTime, DateTime dateOfRecord, F1Car car); 

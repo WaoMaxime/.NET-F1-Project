@@ -4,7 +4,7 @@ namespace DataAccessLayer;
 
 public interface IRepository
 {
-    FastestLap ReadFastestLap(int id);
+    FastestLap ReadFastestLap(TimeSpan lapTime);
     IEnumerable<FastestLap> ReadAllFastestLaps();
     IEnumerable<FastestLap> ReadFastestLapsByCircuit(string circuit);
     void CreateFastestLap(FastestLap lap);

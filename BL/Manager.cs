@@ -13,7 +13,10 @@ namespace BusinessLayer
             _repository = repository;
         }
 
-        public FastestLap GetFastestLap(int id) => _repository.ReadFastestLap(id);
+        public FastestLap GetFastestLapByTime(TimeSpan lapTime)
+        {
+            return _repository.ReadFastestLap(lapTime);
+        }
 
         public IEnumerable<FastestLap> GetAllFastestLaps() => _repository.ReadAllFastestLaps();
 
@@ -26,7 +29,6 @@ namespace BusinessLayer
             _repository.CreateFastestLap(newLap);
             return newLap;
         }
-
         public F1Car GetF1Car(int id) => _repository.ReadF1Car(id);
 
         public IEnumerable<F1Car> GetAllF1Cars() => _repository.ReadAllF1Cars();
