@@ -99,66 +99,80 @@ namespace UI_CA
         {
             try
             {
-                Console.WriteLine("Enter the Team's Constructors's positions in the championship (as a number) or leave blank:");
-                string driverPositionInput = Console.ReadLine();
-                double? driverPosition = null;
-
-                if (!string.IsNullOrEmpty(driverPositionInput))
+                FastestLap fastestLap = new FastestLap();
+                string circuitName;
+                string lapTimeInput;
+                do
                 {
-                    if (double.TryParse(driverPositionInput, out double parsedPosition))
+                    Console.WriteLine("Enter the Circuit of the lap or leave blank:");
+                    circuitName = Console.ReadLine();
+
+                    if (!string.IsNullOrEmpty(circuitName)) 
                     {
-                        driverPosition = parsedPosition;
+                        fastestLap.Circuit = circuitName;
+
+                        var validationResults = new List<ValidationResult>();
+                        var context = new ValidationContext(fastestLap);
+                        bool isValid = Validator.TryValidateObject(fastestLap, context, validationResults, true);
+
+                        if (isValid)
+                        { 
+                            break;
+                        }
+                        Console.WriteLine(validationResults[0].ErrorMessage);
                     }
                     else
                     {
-                        Console.WriteLine("Invalid input for Constructors's Position. Please enter a valid number.");
-                        return; 
+                        break;
                     }
-                }
-
-                Console.WriteLine("Enter a Lap Time (in the format 'minutes.seconds.milliseconds', e.g., 1.40.800) or leave blank:");
-                string lapTimeInput = Console.ReadLine();
-                TimeSpan? lapTime = null;
-
-                if (!string.IsNullOrEmpty(lapTimeInput))
+                } while (true);
+                
+                do
                 {
-                    string[] parts = lapTimeInput.Split('.');
-                    if (parts.Length == 3 &&
-                        int.TryParse(parts[0], out int minutes) &&
-                        int.TryParse(parts[1], out int seconds) &&
-                        int.TryParse(parts[2], out int milliseconds))
+                    Console.WriteLine("Enter a Lap Time (in the format 'minutes.seconds.milliseconds', e.g., 1.40.800) or leave blank:"); 
+                    lapTimeInput = Console.ReadLine();
+
+                    if (!string.IsNullOrEmpty(lapTimeInput)) 
                     {
-                        lapTime = new TimeSpan(0, 0, minutes, seconds, milliseconds);
+                        string[] parts = lapTimeInput.Split('.');
+                        int.TryParse(parts[0], out int minutes);
+                        int.TryParse(parts[1], out int seconds);
+                        int.TryParse(parts[2], out int milliseconds);
+                        TimeSpan lapTime = new TimeSpan(0, 0, minutes, seconds, milliseconds);
+
+                        var validationResults = new List<ValidationResult>();
+                        var context = new ValidationContext(lapTime);
+                        bool isValid = Validator.TryValidateObject(lapTime, context, validationResults, true);
+
+                        if (isValid)
+                        { 
+                            break;
+                        }
+                        Console.WriteLine(validationResults[0].ErrorMessage);
                     }
                     else
                     {
-                        Console.WriteLine("Invalid lap time format. Please use 'minutes.seconds.milliseconds'.");
-                        return;
+                        break;
                     }
-                }
+                } while (true);
 
-                var laps = _manager.GetAllFastestLaps();
-                foreach (var lap in laps)
+                if (circuitName == String.Empty && lapTimeInput == String.Empty)
                 {
-                    if (lap.Car == null)
-                    {
-                        Console.WriteLine("Error: A lap is missing associated car data.");
-                        continue;
-                    }
-
-                    bool driverPositionMatch = !driverPosition.HasValue || lap.Car.DriversPositions == driverPosition.Value;
-                    bool lapTimeMatch = !lapTime.HasValue || Math.Abs((lap.LapTime - lapTime.Value).TotalMilliseconds) < 10;  
-
-                    if (driverPositionMatch && lapTimeMatch)
+                    var laps = _manager.GetAllFastestLaps();
+                    foreach (var lap in laps)
                     {
                         Console.WriteLine(PrintExtentions.PrintFastestLapDetails(lap));
                     }
+                }
 
-                    if (!driverPositionMatch || !lapTimeMatch)
-                    {
-                        Console.WriteLine("No fastest laps were found.");
-                        break;
-                    }
+                if (circuitName == String.Empty)
+                {
+                    
+                }
+                
+                if (lapTimeInput == String.Empty)
+                {
+                    
                 }
             }
             catch (Exception e)
