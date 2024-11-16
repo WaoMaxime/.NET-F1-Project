@@ -45,3 +45,19 @@ SELECT "f"."Id", "f"."Circuit", "f"."AirTemperature", "f"."TrackTemperature", "f
 FROM "FastestLaps" AS "f"
 ```
 
+## Sprint 4
+
+```mermaid
+classDiagram
+  class CarTyre
+  class F1Car
+  class FastestLap
+  class Race
+
+  CarTyre "1" -- "*" F1Car
+  F1Car "1" -- "*" FastestLap
+  FastestLap "*" -- "1" Race
+
+```
+
+

@@ -8,17 +8,17 @@ public static class PrintExtentions
     public static String PrintF1CarDetails(F1Car car)
     {
         return
-            string.Format("Team {0} with chassis {1}, Constructors Position: {2}, Drivers Position: {3}, Manufactured on: {4:dd-MM-yyyy}, Engine Power: {5} HP",
+            string.Format(
+                "Team {0} with chassis {1}, Constructors Position: {2}, Drivers Position: {3}, Manufactured on: {4:dd-MM-yyyy}, Engine Power: {5} HP",
                 car.Team, car.Chasis, car.ConstructorsPosition, car.DriversPositions, car.ManufactureDate,
-                car.EnginePower.HasValue ? car.EnginePower.ToString() : "N/A") +
-            "\n----------------------------------------------------------------------------------------------------------------------------------------------------------";
+                car.EnginePower.HasValue ? car.EnginePower.ToString() : "N/A");
     }
-
     public static String PrintFastestLapDetails(FastestLap lap)
     {
         string formattedLapTime = $"{lap.LapTime.Minutes:D2}:{lap.LapTime.Seconds:D2}.{lap.LapTime.Milliseconds:D3}";
         string formattedDate = lap.DateOfRecord.ToString("dd MMM yyyy");
         return
-            $"Lap at {lap.Circuit} with a {formattedLapTime} by {lap.Car.Chasis} of team {lap.Car.Team.ToString()},\n using a {lap.Car.Tyres.ToString()} tyre compound driven at {formattedDate}, Under the conditions of AirTemp: {lap.AirTemperature} and TrackTemp: {lap.TrackTemperature}";
+            $"Lap at {lap.Circuit} with a {formattedLapTime} by {lap.Car.Chasis} of team {lap.Car.Team.ToString()} during the {lap.Race.Name},\n using a {lap.Car.Tyres.ToString()} tyre compound driven at {formattedDate}, Under the conditions of AirTemp: {lap.AirTemperature} and TrackTemp: {lap.TrackTemperature}" +
+            "\n----------------------------------------------------------------------------------------------------------------------------------------------------------";
     }
 }

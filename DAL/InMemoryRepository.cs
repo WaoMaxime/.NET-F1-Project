@@ -4,75 +4,119 @@ namespace DataAccessLayer
 {
     public class InMemoryRepository : IRepository
     {
-        public static List<FastestLap> FastestLaps;
-        public static List<F1Car> F1Cars;
-        
+        public static List<FastestLap> FastestLaps = new List<FastestLap>();
+        public static List<F1Car> F1Cars = new List<F1Car>();
+        public static List<Race> Races = new List<Race>();
+        public static List<CarTyre> CarTyres = new List<CarTyre>();
+
         public static void Seed()
         {
             FastestLaps.Clear();
             F1Cars.Clear();
-            
+            Races.Clear();
+            CarTyres.Clear();
+
+            Races.AddRange(new List<Race>
+            {
+                new Race { Id = 1, Name = "Monaco GP", Date = new DateTime(2023, 5, 28) },
+                new Race { Id = 2, Name = "Silverstone GP", Date = new DateTime(2023, 7, 9) },
+                new Race { Id = 3, Name = "Belgian GP", Date = new DateTime(2023, 8, 27) },
+                new Race { Id = 4, Name = "Spanish GP", Date = new DateTime(2023, 6, 4) },
+                new Race { Id = 5, Name = "Italian GP", Date = new DateTime(2023, 9, 3) }
+            });
+
             F1Cars.AddRange(new List<F1Car>
             {
                 new F1Car(F1Team.RedBull, "RB19", 1, 1.3, new DateTime(2023, 2, 10), TyreType.Soft, 1050) { Id = 1 },
                 new F1Car(F1Team.Mercedes, "W14", 2, 2.4, new DateTime(2023, 3, 15), TyreType.Medium, 1020) { Id = 2 },
-                new F1Car(F1Team.Ferrari, "SF23", 3, 3.7, new DateTime(2023, 4, 20), TyreType.Hard, 1000) { Id = 3 }
+                new F1Car(F1Team.Ferrari, "SF23", 3, 3.7, new DateTime(2023, 4, 20), TyreType.Hard, 1000) { Id = 3 },
+                new F1Car(F1Team.Mclaren, "MCL60", 4, 5.1, new DateTime(2023, 5, 10), TyreType.Medium, 950) { Id = 4 },
+                new F1Car(F1Team.AstonMartin, "AMR23", 5, 6.2, new DateTime(2023, 6, 18), TyreType.Hard, 980) { Id = 5 }
             });
-            
+
             FastestLaps.AddRange(new List<FastestLap>
             {
-                new FastestLap("Monza", 25, 35, new TimeSpan(0, 1, 19), DateTime.Now, F1Cars[0]) { Id = 1 },
-                new FastestLap("Silverstone", 20, 30, new TimeSpan(0, 1, 27), DateTime.Now, F1Cars[1]) { Id = 2 },
-                new FastestLap("Spa", 18, 28, new TimeSpan(0, 1, 42), DateTime.Now, F1Cars[2]) { Id = 3 }
+                new FastestLap("Monaco", 25, 35, new TimeSpan(0, 1, 19), new DateTime(2023, 5, 28), F1Cars[0], Races[0]) { Id = 1 },
+                new FastestLap("Silverstone", 20, 30, new TimeSpan(0, 1, 27), new DateTime(2023, 7, 9), F1Cars[1], Races[1]) { Id = 2 },
+                new FastestLap("Spa", 18, 28, new TimeSpan(0, 1, 42), new DateTime(2023, 8, 27), F1Cars[2], Races[2]) { Id = 3 },
+                new FastestLap("Barcelona", 22, 32, new TimeSpan(0, 1, 35), new DateTime(2023, 6, 4), F1Cars[3], Races[3]) { Id = 4 },
+                new FastestLap("Monza", 24, 34, new TimeSpan(0, 1, 20), new DateTime(2023, 9, 3), F1Cars[4], Races[4]) { Id = 5 }
             });
-        }
-        
-        public FastestLap ReadFastestLap(TimeSpan lapTime)
-        {
-            return FastestLaps.FirstOrDefault(l => l.LapTime == lapTime );
+
+            CarTyres.AddRange(new List<CarTyre>
+            {
+                new CarTyre { CarId = 1, Tyre = TyreType.Soft, TyrePressure = 20, OperationalTemperature = 90, RaceId = 1 },
+                new CarTyre { CarId = 2, Tyre = TyreType.Medium, TyrePressure = 21, OperationalTemperature = 95, RaceId = 2 },
+                new CarTyre { CarId = 3, Tyre = TyreType.Hard, TyrePressure = 22, OperationalTemperature = 100, RaceId = 3 },
+                new CarTyre { CarId = 4, Tyre = TyreType.Medium, TyrePressure = 19, OperationalTemperature = 88, RaceId = 4 },
+                new CarTyre { CarId = 5, Tyre = TyreType.Hard, TyrePressure = 23, OperationalTemperature = 105, RaceId = 5 }
+            });
+
+
+
+            foreach (var carTyre in CarTyres)
+            {
+                carTyre.Car.CarTyres.Add(carTyre);
+            }
         }
 
-        public IEnumerable<FastestLap> ReadAllFastestLaps()
+        // Eager Loading Methods
+        public IEnumerable<F1Car> ReadAllF1CarsWithTyresAndFastestLaps()
         {
-            return FastestLaps;
-        }
-        
-        public IEnumerable<FastestLap> ReadFastestLapsByPartialTime(TimeSpan partialLapTime)
-        {
-            return FastestLaps.Where(lap => lap.LapTime.Minutes == partialLapTime.Minutes &&
-                                                     lap.LapTime.Seconds / 10 == partialLapTime.Seconds / 10);
-        }
-
-        public IEnumerable<FastestLap> ReadFastestLapsByCircuit(string circuit)
-        {
-            return FastestLaps.Where(lap => lap.Circuit == circuit);
+            return F1Cars.Select(car =>
+            {
+                car.CarTyres = CarTyres.Where(ct => ct.Car.Id == car.Id).ToList();
+                car.FastestLaps = FastestLaps.Where(fl => fl.Car.Id == car.Id).ToList();
+                return car;
+            }).ToList();
         }
 
-        public void CreateFastestLap(FastestLap lap)
+        public IEnumerable<Race> ReadAllRacesWithFastestLapsAndCars()
         {
-            lap.Id = FastestLaps.Count + 1; 
-            FastestLaps.Add(lap);
-        }
-        
-        public F1Car ReadF1Car(int id)
-        {
-            return F1Cars.FirstOrDefault(car => car.Id == id);
-        }
-
-        public IEnumerable<F1Car> ReadAllF1Cars()
-        {
-            return F1Cars;
+            return Races.Select(race =>
+            {
+                race.FastestLaps = FastestLaps.Where(fl => fl.Race.Id == race.Id).ToList();
+                foreach (var lap in race.FastestLaps)
+                {
+                    lap.Car = F1Cars.FirstOrDefault(car => car.Id == lap.Car.Id);
+                }
+                return race;
+            }).ToList();
         }
 
-        public IEnumerable<F1Car> ReadF1CarsByTeam(F1Team team)
+        // Manage Relationships
+        public void AddCarTyre(CarTyre carTyre)
         {
-            return F1Cars.Where(car => car.Team == team);
+            carTyre.Car.CarTyres.Add(carTyre);
+            CarTyres.Add(carTyre);
         }
 
-        public void CreateF1Car(F1Car car)
+        public void RemoveCarTyre(int carId, TyreType tyreType)
         {
-            car.Id = F1Cars.Count + 1; 
-            F1Cars.Add(car);
+            var carTyre = CarTyres.FirstOrDefault(ct => ct.Car.Id == carId && ct.Tyre == tyreType);
+            if (carTyre != null)
+            {
+                carTyre.Car.CarTyres.Remove(carTyre);
+                CarTyres.Remove(carTyre);
+            }
         }
+
+        public IEnumerable<CarTyre> ReadCarTyresForCar(int carId)
+        {
+            return CarTyres.Where(ct => ct.Car.Id == carId).ToList();
+        }
+
+        // Existing Methods (no changes needed)
+        public FastestLap ReadFastestLap(TimeSpan lapTime) => FastestLaps.FirstOrDefault(l => l.LapTime == lapTime);
+        public IEnumerable<FastestLap> ReadAllFastestLaps() => FastestLaps;
+        public IEnumerable<FastestLap> ReadFastestLapsByCircuit(string circuit) => FastestLaps.Where(lap => lap.Circuit == circuit);
+        public void CreateFastestLap(FastestLap lap) => FastestLaps.Add(lap);
+        public F1Car ReadF1Car(int id) => F1Cars.FirstOrDefault(car => car.Id == id);
+        public IEnumerable<F1Car> ReadAllF1Cars() => F1Cars;
+        public IEnumerable<F1Car> ReadF1CarsByTeam(F1Team team) => F1Cars.Where(car => car.Team == team);
+        public void CreateF1Car(F1Car car) => F1Cars.Add(car);
+        public IEnumerable<Race> ReadAllRaces() => Races;
+        public Race ReadRace(int id) => Races.FirstOrDefault(race => race.Id == id);
+        public void CreateRace(Race race) => Races.Add(race);
     }
 }
