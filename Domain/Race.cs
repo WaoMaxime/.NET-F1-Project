@@ -5,15 +5,13 @@ namespace Domain;
 public class Race
 {
     [Key]
-    public int Id { get; set; }
+    public int Id { get; init; }
 
-    [Required(ErrorMessage = "Race name is required.")]
-    [StringLength(100, MinimumLength = 3, ErrorMessage = "Race name must be between 3 and 100 characters.")]
-    public string Name { get; set; } = null!;
-
-    [Required(ErrorMessage = "Race date is required.")]
-    public DateTime Date { get; set; }
-    public ICollection<CarTyre> CarTyres { get; set; } = new List<CarTyre>();
+    [Required]
+    [StringLength(100, MinimumLength = 3)]
+    public string Name { get; init; } = null!;
+    public DateTime Date { get; init; }
+    public CarTyre Tyre { get; init; }
 
     public ICollection<FastestLap> FastestLaps { get; set; } = new List<FastestLap>();
 }

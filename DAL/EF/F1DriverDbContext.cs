@@ -45,10 +45,9 @@ namespace DataAccessLayer.EF
             
             modelBuilder.Entity<CarTyre>()
                 .HasOne(ct => ct.Race)
-                .WithMany(r => r.CarTyres) 
-                .HasForeignKey(ct => ct.RaceId)
+                .WithOne(r => r.Tyre) 
+                .HasForeignKey<CarTyre>(ct => ct.RaceId)
                 .OnDelete(DeleteBehavior.SetNull);
- 
             
             modelBuilder.Entity<CarTyre>()
                 .HasKey(ct => new { ct.CarId, ct.Tyre }); 
