@@ -3,10 +3,10 @@ namespace DataAccessLayer;
 
 public class InMemoryRepository : IRepository
 {
-    public static List<FastestLap> FastestLaps = new();
-    public static List<F1Car> F1Cars = new();
-    public static List<Race> Races = new();
-    public static List<CarTyre> CarTyres = new();
+    private static readonly List<FastestLap> FastestLaps = [];
+    private static readonly List<F1Car> F1Cars = [];
+    private static readonly List<Race> Races = [];
+    private static readonly List<CarTyre> CarTyres = [];
 
     public static void Seed()
     {

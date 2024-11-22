@@ -6,65 +6,49 @@ public enum F1Team
     RedBull,
     Ferrari,
     Mclaren,
-    AstonMartin,
-    Alpine,
-    VsCashApp,
-    Haas,
-    KickSauber,
-    Williams
+    AstonMartin
 }
 
-public class F1Car : IValidatableObject
+public class F1Car(
+    F1Team team,
+    string chasis,
+    int constructorsPosition,
+    double driversPositions,
+    DateTime manufactureDate,
+    TyreType tyres,
+    double? enginePower = null)
+    : IValidatableObject
 {
     [Key]
     public int Id { get; init; }
 
     [Required]
-    public F1Team Team { get; set; }
+    public F1Team Team { get; set; } = team;
 
     [Required]
     [StringLength(50, MinimumLength = 2)]
-    public string Chasis { get; set; }
+    public string Chasis { get; set; } = chasis;
 
     [Range(1, 10)]
-    public int ConstructorsPosition { get; set; }
+    public int ConstructorsPosition { get; set; } = constructorsPosition;
 
     [Range(0, 50)]
-    public double DriversPositions { get; set; }
-        
-    public DateTime ManufactureDate { get; set; }
+    public double DriversPositions { get; set; } = driversPositions;
+
+    public DateTime ManufactureDate { get; set; } = manufactureDate;
 
     [Required]
-    public TyreType Tyres { get; set; }
+    public TyreType Tyres { get; set; } = tyres;
 
     [Range(500, 1500)]
-    public double? EnginePower { get; set; }
+    public double? EnginePower { get; set; } = enginePower;
 
     public ICollection<FastestLap> FastestLaps { get; set; } = new List<FastestLap>();
        
     public ICollection<CarTyre> CarTyres { get; set; } = new List<CarTyre>();
 
-    public F1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions,
-        DateTime manufactureDate, TyreType tyres, double? enginePower = null)
+    public F1Car() : this(F1Team.Mercedes, "Default Chassis", 1, 1.0, DateTime.Now.AddYears(-1), TyreType.Medium, 1000)
     {
-        Team = team;
-        Chasis = chasis;
-        ConstructorsPosition = constructorsPosition;
-        DriversPositions = driversPositions;
-        ManufactureDate = manufactureDate;
-        EnginePower = enginePower;
-        Tyres = tyres;
-    }
-
-    public F1Car()
-    {
-        Team = F1Team.Mercedes;
-        Chasis = "Default Chassis";
-        ConstructorsPosition = 1;
-        DriversPositions = 1.0;
-        ManufactureDate = DateTime.Now.AddYears(-1);
-        Tyres = TyreType.Medium;
-        EnginePower = 1000; 
     }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

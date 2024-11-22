@@ -12,21 +12,15 @@ public static class TyreTypeExtensions
 {
     public static string ToFriendlyString(this TyreType tyreType)
     {
-        switch (tyreType)
+        return tyreType switch
         {
-            case TyreType.Soft:
-                return "Soft Tyre";
-            case TyreType.Medium:
-                return "Medium Tyre";
-            case TyreType.Hard:
-                return "Hard Tyre";
-            case TyreType.Inter:
-                return "Intermediate Tyre";
-            case TyreType.FullWet:
-                return "Full Wet Tyre";
-            default:
-                return tyreType.ToString(); 
-        }
+            TyreType.Soft => "Soft Tyre",
+            TyreType.Medium => "Medium Tyre",
+            TyreType.Hard => "Hard Tyre",
+            TyreType.Inter => "Intermediate Tyre",
+            TyreType.FullWet => "Full Wet Tyre",
+            _ => tyreType.ToString()
+        };
     }
 }
 

@@ -2,48 +2,41 @@
 using DataAccessLayer;
 using Domain;
 namespace BusinessLayer;
-public class Manager : IManager
+public class Manager(IRepository repository) : IManager
 {
-    private readonly IRepository _repository;
-
-    public Manager(IRepository repository)
-    {
-        _repository = repository;
-    }
-        
     public IEnumerable<FastestLap> GetFastestLapByTime(TimeSpan lapTime)
     {
-        return _repository.ReadFastestLapsByTime(lapTime);
+        return repository.ReadFastestLapsByTime(lapTime);
     }
 
-    public IEnumerable<FastestLap> GetAllFastestLaps() => _repository.ReadAllFastestLaps();
+    public IEnumerable<FastestLap> GetAllFastestLaps() => repository.ReadAllFastestLaps();
 
-    public IEnumerable<FastestLap> GetFastestLapsByCircuit(string circuit) => _repository.ReadFastestLapsByCircuit(circuit);
+    public IEnumerable<FastestLap> GetFastestLapsByCircuit(string circuit) => repository.ReadFastestLapsByCircuit(circuit);
 
     public IEnumerable<F1Car> GetAllF1CarsWithDetails()
     {
-        return _repository.ReadAllF1CarsWithTyresAndFastestLaps();
+        return repository.ReadAllF1CarsWithTyresAndFastestLaps();
     }
 
     public IEnumerable<Race> GetAllRacesWithDetails()
     {
-        return _repository.ReadAllRacesWithFastestLapsAndCars();
+        return repository.ReadAllRacesWithFastestLapsAndCars();
     }
         
     public IEnumerable<CarTyre> GetCarTyresForCarById(int carId)
     {
-        return _repository.ReadCarTyresForCarById(carId);
+        return repository.ReadCarTyresForCarById(carId);
     }
         
-    public IEnumerable<F1Car> GetF1CarsByTeam(F1Team team) => _repository.ReadF1CarsByTeam(team);
+    public IEnumerable<F1Car> GetF1CarsByTeam(F1Team team) => repository.ReadF1CarsByTeam(team);
         
-    public IEnumerable<F1Car> GetAllF1Cars() => _repository.ReadAllF1Cars();
+    public IEnumerable<F1Car> GetAllF1Cars() => repository.ReadAllF1Cars();
         
-    public IEnumerable<Race> GetAllRaces() => _repository.ReadAllRaces();
+    public IEnumerable<Race> GetAllRaces() => repository.ReadAllRaces();
 
     public void AddTyreToCar(int carId, TyreType tyreType, int tyrePressure, int operationalTemperature)
     {
-        var car = _repository.ReadF1Car(carId);
+        var car = repository.ReadF1Car(carId);
         if (car == null) throw new Exception("Car not found!");
 
         var newCarTyre = new CarTyre
@@ -54,24 +47,24 @@ public class Manager : IManager
             OperationalTemperature = operationalTemperature
         };
 
-        _repository.AddCarTyre(newCarTyre);
+        repository.AddCarTyre(newCarTyre);
     } 
         
     public void AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, double? enginePower = null)
     {
         var newCar = new F1Car(team, chasis, constructorsPosition, driversPositions, manufactureDate, tyres, enginePower);
         ValidateModel(newCar);
-        _repository.CreateF1Car(newCar);
+        repository.CreateF1Car(newCar);
     }
         
     public void AddRace(Race race)
     {
-        _repository.CreateRace(race);
+        repository.CreateRace(race);
     }
         
     public void RemoveTyreFromCar(int carId, TyreType tyreType)
     {
-        _repository.RemoveCarTyre(carId, tyreType);
+        repository.RemoveCarTyre(carId, tyreType);
     }
         
     public FastestLap AddFastestLap(
@@ -88,13 +81,13 @@ public class Manager : IManager
 
         var newLap = new FastestLap(circuit, airTemperature, trackTemperature, lapTime, dateOfRecord, car, race);
         ValidateModel(newLap);
-        _repository.CreateFastestLap(newLap);
+        repository.CreateFastestLap(newLap);
         return newLap;
     }
         
-    public F1Car GetF1Car(int id) => _repository.ReadF1Car(id);
+    public F1Car GetF1Car(int id) => repository.ReadF1Car(id);
         
-    public Race GetRace(int id) => _repository.ReadRace(id);
+    public Race GetRace(int id) => repository.ReadRace(id);
         
     private static void ValidateModel(object model)
     {

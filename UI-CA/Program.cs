@@ -6,16 +6,14 @@ using UI_CA;
 var optionsBuilder = new DbContextOptionsBuilder<F1CarDbContext>()
     .UseSqlite("Data Source=f1cars.db");
 
-using(var context = new F1CarDbContext(optionsBuilder.Options))
+using var context = new F1CarDbContext(optionsBuilder.Options, null, null, null, null);
+var databaseCreated = context.CreateDatabase(); 
+if (databaseCreated)
 {
-    var databaseCreated = context.CreateDatabase(); 
-    if (databaseCreated)
-    {
-        Console.WriteLine("Seeding the database...");
-        DataSeeder.Seed(context);  
-    }
-    var repository = new Repository(context);
-    var manager = new Manager(repository);
-    var ui = new ConsoleUi(manager);
-    ui.Run();
+    Console.WriteLine("Seeding the database...");
+    DataSeeder.Seed(context);  
 }
+var repository = new Repository(context);
+var manager = new Manager(repository);
+var ui = new ConsoleUi(manager);
+ui.Run();

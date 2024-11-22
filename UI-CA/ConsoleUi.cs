@@ -4,15 +4,8 @@ using Domain;
 using UI_CA.Extentions;
 namespace UI_CA;
 
-public class ConsoleUi
+public class ConsoleUi(IManager manager)
 {
-    private readonly IManager _manager;
-
-    public ConsoleUi(IManager manager)
-    {
-        _manager = manager;
-    }
-
     public void Run()
     {
         do
@@ -23,7 +16,7 @@ public class ConsoleUi
                               "\n1) Show all team's car's" +
                               "\n2) Show fastest laps of team" +
                               "\n3) Show all tyre types" +
-                              "\n4) Show fastest lap from circuit and/or the driven laptime" +
+                              "\n4) Show fastest lap from circuit and/or the driven lap time" +
                               "\n5) Add a new F1 Car" +
                               "\n6) Add a new Fastest Lap" +
                               "\n7) Add tyre to car" +
@@ -64,14 +57,14 @@ public class ConsoleUi
     {
         try
         {
-            Boolean resume = true;
+            var resume = true;
             Console.WriteLine("Enter Car ID:");
-            if (!int.TryParse(Console.ReadLine(), out int carId))
+            if (!int.TryParse(Console.ReadLine(), out var carId))
             {
                 Console.WriteLine("Invalid car ID.");
                 return;
             }
-            if (_manager.GetF1Car(carId).CarTyres.Count != 0)
+            if (manager.GetF1Car(carId).CarTyres.Count != 0)
             {
                 Console.WriteLine("Car is already has a tyre setup assigned");
                 resume = false;
@@ -80,15 +73,15 @@ public class ConsoleUi
             {
                 return;
             }
-            var car = _manager.GetF1Car(carId);
+            var car = manager.GetF1Car(carId);
             if (car == null)
             {
                 Console.WriteLine("Car not found.");
                 return;
             }
 
-            Console.WriteLine("Enter Tyre Type (Soft, Medium, Hard, Inter, or Fullwet):");
-            string tyreInput = Console.ReadLine();
+            Console.WriteLine("Enter Tyre Type (Soft, Medium, Hard, Inter, or Full wet):");
+            var tyreInput = Console.ReadLine();
             if (!Enum.TryParse(tyreInput, true, out TyreType tyreType))
             {
                 Console.WriteLine("Invalid tyre type.");
@@ -96,20 +89,20 @@ public class ConsoleUi
             }
 
             Console.WriteLine("Enter Tyre Pressure:");
-            if (!int.TryParse(Console.ReadLine(), out int tyrePressure))
+            if (!int.TryParse(Console.ReadLine(), out var tyrePressure))
             {
                 Console.WriteLine("Invalid tyre pressure.");
                 return;
             }
 
             Console.WriteLine("Enter Operational Temperature:");
-            if (!int.TryParse(Console.ReadLine(), out int operationalTemperature))
+            if (!int.TryParse(Console.ReadLine(), out var operationalTemperature))
             {
                 Console.WriteLine("Invalid operational temperature.");
                 return;
             }
 
-            _manager.AddTyreToCar(carId, tyreType, tyrePressure, operationalTemperature);
+            manager.AddTyreToCar(carId, tyreType, tyrePressure, operationalTemperature);
             Console.WriteLine("Tyre added successfully.");
         }
         catch (Exception ex)
@@ -122,16 +115,16 @@ public class ConsoleUi
     {
         try
         {
-            Boolean resume = true;
+            var resume = true;
             Console.WriteLine("Enter Car ID:");
             
-            if (!int.TryParse(Console.ReadLine(), out int carId))
+            if (!int.TryParse(Console.ReadLine(), out var carId))
             {
                 Console.WriteLine("Invalid car ID.");
                 return;
             }
             
-            if (_manager.GetF1Car(carId).CarTyres.Count == 0)
+            if (manager.GetF1Car(carId).CarTyres.Count == 0)
             {
                 Console.WriteLine("Car is already has currently no tyre setup assigned");
                 resume = false;
@@ -142,22 +135,22 @@ public class ConsoleUi
                 return;
             }
 
-            var car = _manager.GetF1Car(carId);
+            var car = manager.GetF1Car(carId);
             if (car == null)
             {
                 Console.WriteLine("Car not found.");
                 return;
             }
 
-            Console.WriteLine("Enter Tyre Type to Remove (Soft, Medium, Hard, Inter, or Fullwet):");
-            string tyreInput = Console.ReadLine();
+            Console.WriteLine("Enter Tyre Type to Remove (Soft, Medium, Hard, Inter, or Full wet):");
+            var tyreInput = Console.ReadLine();
             if (!Enum.TryParse(tyreInput, true, out TyreType tyreType))
             {
                 Console.WriteLine("Invalid tyre type.");
                 return;
             }
 
-            _manager.RemoveTyreFromCar(carId, tyreType);
+            manager.RemoveTyreFromCar(carId, tyreType);
             Console.WriteLine("Tyre removed successfully.");
         }
         catch (Exception ex)
@@ -168,19 +161,17 @@ public class ConsoleUi
 
     private void ShowAllTeams()
     {
-        var cars = _manager.GetAllF1CarsWithDetails();
+        var cars = manager.GetAllF1CarsWithDetails();
         var uniqueCars = new HashSet<string>();
 
         foreach (var car in cars)
         {
-            if (uniqueCars.Add(car.Chasis))
+            if (!uniqueCars.Add(car.Chasis)) continue;
+            Console.WriteLine(PrintExtentions.PrintF1CarDetails(car));
+            foreach (var tyre in car.CarTyres)
             {
-                Console.WriteLine(PrintExtentions.PrintF1CarDetails(car));
-                foreach (var tyre in car.CarTyres)
-                {
-                    Console.WriteLine($"  Tyre: {tyre.Tyre}, Pressure: {tyre.TyrePressure}, Temp: {tyre.OperationalTemperature}" + 
-                                      "\n----------------------------------------------------------------------------------------------------------------------------------------------------------");
-                }
+                Console.WriteLine($"  Tyre: {tyre.Tyre}, Pressure: {tyre.TyrePressure}, Temp: {tyre.OperationalTemperature}" + 
+                                  "\n----------------------------------------------------------------------------------------------------------------------------------------------------------");
             }
         }
     }
@@ -188,7 +179,7 @@ public class ConsoleUi
     private void ShowFastestLapsByTeam()
     {
         Console.WriteLine("Enter (part of) a Team Name:");
-        string teamName = Console.ReadLine();
+        var teamName = Console.ReadLine();
 
         if (string.IsNullOrWhiteSpace(teamName))
         {
@@ -196,16 +187,8 @@ public class ConsoleUi
             return;
         }
 
-        var laps = _manager.GetAllFastestLaps();
-        var matchingLaps = new List<FastestLap>();
-
-        foreach (var lap in laps)
-        {
-            if (lap.Car.Team.ToString().IndexOf(teamName, StringComparison.OrdinalIgnoreCase) >= 0)
-            {
-                matchingLaps.Add(lap);
-            }
-        }
+        var laps = manager.GetAllFastestLaps();
+        var matchingLaps = laps.Where(lap => lap.Car.Team.ToString().Contains(teamName, StringComparison.OrdinalIgnoreCase)).ToList();
 
         if (matchingLaps.Count > 0)
         {
@@ -220,7 +203,7 @@ public class ConsoleUi
         }
     }
 
-    private void ShowTyreTypes()
+    private static void ShowTyreTypes()
     {
         var tyreTypes = Enum.GetValues(typeof(TyreType));
 
@@ -233,11 +216,10 @@ public class ConsoleUi
 
     private void FilterLaps()
     {
-        FastestLap fastestLap = new FastestLap();
+        var fastestLap = new FastestLap();
         string circuitName;
         string lapTimeInput;
-        TimeSpan lapTime = new TimeSpan();
-
+        var lapTime = new TimeSpan();
         do
         {
             Console.WriteLine("Enter the Circuit of the lap or leave blank:");
@@ -249,7 +231,7 @@ public class ConsoleUi
 
                 var validationResults = new List<ValidationResult>();
                 var context = new ValidationContext(fastestLap);
-                bool isValid = Validator.TryValidateObject(fastestLap, context, validationResults, true);
+                var isValid = Validator.TryValidateObject(fastestLap, context, validationResults, true);
 
                 if (isValid)
                 {
@@ -271,11 +253,11 @@ public class ConsoleUi
             {
                 try
                 {
-                    string[] parts = lapTimeInput.Split('.');
+                    var parts = lapTimeInput.Split('.');
                     if (parts.Length == 3 &&
-                        int.TryParse(parts[0], out int minutes) &&
-                        int.TryParse(parts[1], out int seconds) &&
-                        int.TryParse(parts[2], out int milliseconds))
+                        int.TryParse(parts[0], out var minutes) &&
+                        int.TryParse(parts[1], out var seconds) &&
+                        int.TryParse(parts[2], out var milliseconds))
                     {
                         lapTime = new TimeSpan(0, 0, minutes, seconds, milliseconds);
                         break;
@@ -295,70 +277,27 @@ public class ConsoleUi
 
         if (string.IsNullOrEmpty(circuitName) && !string.IsNullOrEmpty(lapTimeInput))
         {
-            var laps = _manager.GetFastestLapByTime(lapTime).ToList();
-            if (laps.Any() == false)
-            {
-                Console.WriteLine("No fastest laps found.");
-                return;
-            }
-            foreach (var lap in laps)
-            {
-                Console.WriteLine(PrintExtentions.PrintFastestLapDetails(lap));
-            }
+            DisplayFastestLaps(() => manager.GetFastestLapByTime(lapTime));
         }
 
         if (string.IsNullOrEmpty(lapTimeInput) && !string.IsNullOrEmpty(circuitName))
         {
-            var laps = _manager.GetFastestLapsByCircuit(circuitName).ToList();
-            if (laps.Any() == false)
-            {
-                Console.WriteLine("No fastest laps found.");
-                return;
-            }
-            foreach (var lap in laps)
-            {
-                Console.WriteLine(PrintExtentions.PrintFastestLapDetails(lap));
-            }
+            DisplayFastestLaps(() => manager.GetFastestLapsByCircuit(circuitName));
         }
 
+        
         if (string.IsNullOrEmpty(circuitName) && string.IsNullOrEmpty(lapTimeInput))
         {
-            var laps = _manager.GetAllFastestLaps().ToList();
-            if (laps.Any() == false)
-            {
-                Console.WriteLine("No fastest laps found.");
-                return;
-            }
-            foreach (var lap in laps)
-            {
-                Console.WriteLine(PrintExtentions.PrintFastestLapDetails(lap));
-            }
+            DisplayFastestLaps(manager.GetAllFastestLaps);
         }
-            
-        if (!string.IsNullOrEmpty(circuitName) && !string.IsNullOrEmpty(lapTimeInput))
-        {
-            var lapsByCircuit = _manager.GetFastestLapsByCircuit(circuitName);
-            var lapByTime = _manager.GetFastestLapByTime(lapTime);
-            IEnumerable<FastestLap> matchingItems = lapsByCircuit.Intersect(lapByTime).ToList();
-                
-            if (matchingItems.Any() == false)
-            {
-                Console.WriteLine("No fastest laps found for given laptime and circuit name.");
-                return;
-            }
-            foreach (var lap in matchingItems)
-            {
-                Console.WriteLine(PrintExtentions.PrintFastestLapDetails(lap));
-            }
-        }
+
     }
-
-
+    
     private void AddNewF1Car()
     {
         try
         {
-            F1Car newCar = new F1Car();
+            var newCar = new F1Car();
             do
             {
                 Console.WriteLine("Enter Team (e.g., Mercedes, RedBull, Ferrari):");
@@ -373,7 +312,7 @@ public class ConsoleUi
                     newCar.Team = teamName;
                     var validationResults = new List<ValidationResult>(); 
                     var context = new ValidationContext(newCar); 
-                    bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
+                    var isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
 
                     if (isValid)
                     {
@@ -394,7 +333,7 @@ public class ConsoleUi
                     
                 var validationResults = new List<ValidationResult>();
                 var context = new ValidationContext(newCar);
-                bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
+                var isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
 
                 if (isValid)
                 { 
@@ -406,7 +345,7 @@ public class ConsoleUi
             do
             {
                 Console.WriteLine("Enter Constructors Position (1-10):"); 
-                if (!int.TryParse(Console.ReadLine(), out int constructorsPosition))
+                if (!int.TryParse(Console.ReadLine(), out var constructorsPosition))
                 { 
                     Console.WriteLine("Please enter a valid number of constructors positions.");
                 }
@@ -415,7 +354,7 @@ public class ConsoleUi
 
                 var validationResults = new List<ValidationResult>();
                 var context = new ValidationContext(newCar);
-                bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
+                var isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
 
                 if (isValid)
                 { 
@@ -427,7 +366,7 @@ public class ConsoleUi
             do
             {
                 Console.WriteLine("Enter Driver's Position in Championship (1-20):");
-                if (!double.TryParse(Console.ReadLine(), out double driverPosition))
+                if (!double.TryParse(Console.ReadLine(), out var driverPosition))
                 { 
                     Console.WriteLine("Please enter a valid number of driver's position.");
                 }
@@ -435,7 +374,7 @@ public class ConsoleUi
                 newCar.DriversPositions = driverPosition;
                 var validationResults = new List<ValidationResult>();
                 var context = new ValidationContext(newCar);
-                bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
+                var isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
 
                 if (isValid)
                 { 
@@ -447,8 +386,8 @@ public class ConsoleUi
             do
             {
                 Console.WriteLine("Enter Manufacture Date (yyyy-mm-dd):");
-                string dateOfManufactureInput = Console.ReadLine();
-                if (!DateTime.TryParse(dateOfManufactureInput, out DateTime dateOfManufacture) || dateOfManufacture > DateTime.Now)
+                var dateOfManufactureInput = Console.ReadLine();
+                if (!DateTime.TryParse(dateOfManufactureInput, out var dateOfManufacture) || dateOfManufacture > DateTime.Now)
                 { 
                     Console.WriteLine("You didn't enter a valid date. Please enter a date in format 'yyyy-mm-dd'."); 
                     continue;
@@ -458,7 +397,7 @@ public class ConsoleUi
 
                 var validationResults = new List<ValidationResult>();
                 var context = new ValidationContext(newCar);
-                bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
+                var isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
 
                 if (isValid)
                 { 
@@ -469,8 +408,8 @@ public class ConsoleUi
                         
             do
             {
-                Console.WriteLine("Enter Tyre Type (Soft, Medium, Hard, Inter or Fullwet):");
-                string tyreInput = Console.ReadLine();
+                Console.WriteLine("Enter Tyre Type (Soft, Medium, Hard, Inter or Full wet):");
+                var tyreInput = Console.ReadLine();
 
                 if (Enum.TryParse(tyreInput, true, out TyreType tyres)) 
                 {
@@ -478,7 +417,7 @@ public class ConsoleUi
 
                     var validationResults = new List<ValidationResult>();
                     var context = new ValidationContext(newCar);
-                    bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
+                    var isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
 
                     if (isValid)
                     { 
@@ -495,13 +434,13 @@ public class ConsoleUi
             do
             {
                 Console.WriteLine("Enter Engine Power (in HP, e.g., 1000):");
-                if (double.TryParse(Console.ReadLine(), out double enginePower) && enginePower >= 500 && enginePower <= 1500)
+                if (double.TryParse(Console.ReadLine(), out var enginePower) && enginePower is >= 500 and <= 1500)
                 { 
                     newCar.EnginePower = enginePower;
 
                     var validationResults = new List<ValidationResult>();
                     var context = new ValidationContext(newCar);
-                    bool isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
+                    var isValid = Validator.TryValidateObject(newCar, context, validationResults, true);
 
                     if (isValid)
                     { 
@@ -514,7 +453,7 @@ public class ConsoleUi
                     Console.WriteLine("Invalid engine power. Please enter a value between 500 and 1500.");
                 } 
             } while (true);
-            _manager.AddF1Car(newCar.Team, newCar.Chasis,newCar.ConstructorsPosition,newCar.DriversPositions,newCar.ManufactureDate,newCar.Tyres,newCar.EnginePower);
+            manager.AddF1Car(newCar.Team, newCar.Chasis,newCar.ConstructorsPosition,newCar.DriversPositions,newCar.ManufactureDate,newCar.Tyres,newCar.EnginePower);
             Console.WriteLine($"New F1Car Added: {PrintExtentions.PrintF1CarDetails(newCar)}");
         }
         catch (Exception ex)
@@ -528,13 +467,12 @@ public class ConsoleUi
     {
         try
         {
-            FastestLap lap = new FastestLap();
+            var lap = new FastestLap();
             string circuit;
             int airTemperature, trackTemperature;
-            TimeSpan lapTime = TimeSpan.Zero;
+            var lapTime = TimeSpan.Zero;
             DateTime dateOfRecord;
-            Race race;
-            Boolean exit = false;
+            var exit = false;
                 
             do
             {
@@ -544,7 +482,7 @@ public class ConsoleUi
                 var validationResults = new List<ValidationResult>();
                 var circuitContext = new ValidationContext(circuitOnly);
 
-                bool isValid = Validator.TryValidateObject(circuitOnly, circuitContext, validationResults, true);
+                var isValid = Validator.TryValidateObject(circuitOnly, circuitContext, validationResults, true);
 
                 if (!isValid)
                 {
@@ -560,7 +498,7 @@ public class ConsoleUi
             do
             {
                 Console.WriteLine("Enter Air Temperature (between -30 and 50 degrees Celsius):");
-                string airTempInput = Console.ReadLine();
+                var airTempInput = Console.ReadLine();
 
                 if (!int.TryParse(airTempInput, out airTemperature))
                 {
@@ -573,7 +511,7 @@ public class ConsoleUi
                 var context = new ValidationContext(tempLap);
                 tempLap.Circuit = circuit;
 
-                bool isValid = Validator.TryValidateObject(tempLap, context, validationResults, true);
+                var isValid = Validator.TryValidateObject(tempLap, context, validationResults, true);
 
                 if (!isValid)
                 {
@@ -589,7 +527,7 @@ public class ConsoleUi
             do
             {
                 Console.WriteLine("Enter Track Temperature (between -30 and 50 degrees Celsius):");
-                string trackTempInput = Console.ReadLine();
+                var trackTempInput = Console.ReadLine();
 
                 if (!int.TryParse(trackTempInput, out trackTemperature))
                 {
@@ -597,12 +535,12 @@ public class ConsoleUi
                     continue;
                 }
 
-                var trackTemplap = new FastestLap { TrackTemperature = trackTemperature };
+                var trackTemp = new FastestLap { TrackTemperature = trackTemperature };
                 var validationResults = new List<ValidationResult>();  
-                var context = new ValidationContext(trackTemplap);
-                trackTemplap.AirTemperature = airTemperature;
+                var context = new ValidationContext(trackTemp);
+                trackTemp.AirTemperature = airTemperature;
 
-                bool isValid = Validator.TryValidateObject(trackTemplap, context, validationResults, true);
+                var isValid = Validator.TryValidateObject(trackTemp, context, validationResults, true);
 
                 if (!isValid)
                 {
@@ -610,15 +548,15 @@ public class ConsoleUi
                 }
                 else
                 {
-                    lap.TrackTemperature = trackTemplap.TrackTemperature;
+                    lap.TrackTemperature = trackTemp.TrackTemperature;
                     break;
                 }
             } while (true);
                 
             do
             {
-                Console.WriteLine("Enter Lap Time (format 'm.sss.msmsms', e.g., 1.40.564):");
-                string lapTimeInput = Console.ReadLine();
+                Console.WriteLine("Enter Lap Time (format 'm.sss.ms ms ms', e.g., 1.40.564):");
+                var lapTimeInput = Console.ReadLine();
 
                 if (string.IsNullOrWhiteSpace(lapTimeInput))
                 {
@@ -626,7 +564,7 @@ public class ConsoleUi
                     var validationResults = new List<ValidationResult>();
                     var context = new ValidationContext(timeLap);
                     timeLap.TrackTemperature = trackTemperature;
-                    bool isValid = Validator.TryValidateObject(timeLap, context, validationResults, true);
+                    var isValid = Validator.TryValidateObject(timeLap, context, validationResults, true);
 
                     if (!isValid)
                     {
@@ -635,11 +573,11 @@ public class ConsoleUi
                 }
                 else
                 {
-                    string[] parts = lapTimeInput.Split('.');
+                    var parts = lapTimeInput.Split('.');
                     if (parts.Length == 3 &&
-                        int.TryParse(parts[0], out int minutes) &&
-                        int.TryParse(parts[1], out int seconds) &&
-                        int.TryParse(parts[2], out int milliseconds))
+                        int.TryParse(parts[0], out var minutes) &&
+                        int.TryParse(parts[1], out var seconds) &&
+                        int.TryParse(parts[2], out var milliseconds))
                     {
                         if (seconds < 60 && milliseconds < 1000)
                         {
@@ -651,7 +589,7 @@ public class ConsoleUi
                     }
                     else
                     {
-                        Console.WriteLine("Invalid format. Please enter the lap time in 'm.sss.msmsms' format.");
+                        Console.WriteLine("Invalid format. Please enter the lap time in 'm.sss.ms ms ms' format.");
                     }
                 }
             } while (true);
@@ -659,7 +597,7 @@ public class ConsoleUi
             do
             {
                 Console.WriteLine("Enter Date of Record (yyyy-mm-dd):");
-                string dateOfRecordInput = Console.ReadLine();
+                var dateOfRecordInput = Console.ReadLine();
                 if (!DateTime.TryParse(dateOfRecordInput, out dateOfRecord) || dateOfRecord > DateTime.Now)
                 {
                     Console.WriteLine("You didn't enter a valid date. Please enter a date in format 'yyyy-mm-dd'.");
@@ -671,7 +609,7 @@ public class ConsoleUi
                 var context = new ValidationContext(recordDate);
                 recordDate.LapTime = lapTime;
                     
-                bool isValid = Validator.TryValidateObject(recordDate, context, validationResults, true);
+                var isValid = Validator.TryValidateObject(recordDate, context, validationResults, true);
 
                 if (!isValid)
                 { 
@@ -689,14 +627,14 @@ public class ConsoleUi
                 Console.WriteLine("Enter Race Name:");
                 string raceName = Console.ReadLine();
 
-                var allRaces = _manager.GetAllRaces()
+                var allRaces = manager.GetAllRaces()
                     .Where(r => r.Name.Equals(raceName, StringComparison.OrdinalIgnoreCase))
                     .ToList();
                 if (allRaces.Count == 0)
                 {
                     Console.WriteLine("No race found with that name. Please try again or add a new race first by adding the car tyre setup.");
                     Console.WriteLine("Type 'exit' to exit or press Enter to try again.");
-                    string userInput = Console.ReadLine();
+                    var userInput = Console.ReadLine();
                     if (!string.IsNullOrEmpty(userInput) && userInput.Equals("exit", StringComparison.OrdinalIgnoreCase))
                     {
                         exit = true;
@@ -704,7 +642,7 @@ public class ConsoleUi
                     }
                     continue; 
                 }
-                race = allRaces.First();
+                var race = allRaces.First();
                 lap.Race = race;
                 break; 
             } while (true);
@@ -713,12 +651,26 @@ public class ConsoleUi
             { 
                 return;
             }
-            var newLap = _manager.AddFastestLap(circuit, airTemperature, trackTemperature, lapTime, dateOfRecord, lap.Car, lap.Race);
+            var newLap = manager.AddFastestLap(circuit, airTemperature, trackTemperature, lapTime, dateOfRecord, lap.Car, lap.Race);
             Console.WriteLine($"New Fastest Lap Added: {PrintExtentions.PrintFastestLapDetails(newLap)}");
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}. Please try again.");
+        }
+    }
+
+    private static void DisplayFastestLaps(Func<IEnumerable<FastestLap>> getLapsMethod)
+    {
+        var laps = getLapsMethod().ToList();
+        if (laps.Count != 0 == false)
+        {
+            Console.WriteLine("No fastest laps found.");
+            return;
+        }
+        foreach (var lap in laps)
+        {
+            Console.WriteLine(PrintExtentions.PrintFastestLapDetails(lap));
         }
     }
 }
