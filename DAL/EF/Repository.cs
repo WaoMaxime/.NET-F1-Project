@@ -55,17 +55,15 @@ public class Repository(F1CarDbContext context) : IRepository
         return context.F1Cars
             .Include(fc => fc.CarTyres)
             .Include(fc => fc.FastestLaps)
-            .ThenInclude(fl => fl.Race) 
-            .ToList();
+            .ThenInclude(fl => fl.Race);
     }
     
     public IEnumerable<Race> ReadAllRacesWithFastestLapsAndCars()
     {
         return context.Races
             .Include(r => r.FastestLaps)
-            .ThenInclude(fl => fl.Car) 
-            .ThenInclude(fc => fc.CarTyres) 
-            .ToList();
+            .ThenInclude(fl => fl.Car)
+            .ThenInclude(fc => fc.CarTyres);
     }
     
     public IEnumerable<CarTyre> ReadCarTyresForCarById(int carId)
@@ -84,11 +82,9 @@ public class Repository(F1CarDbContext context) : IRepository
         var carTyre = context.CarTyres
             .FirstOrDefault(ct => ct.Car.Id == carId && ct.Tyre == tyreType);
 
-        if (carTyre != null)
-        {
-            context.CarTyres.Remove(carTyre);
-            context.SaveChanges();
-        }
+        if (carTyre == null) return;
+        context.CarTyres.Remove(carTyre);
+        context.SaveChanges();
     }
     
     public void CreateFastestLap(FastestLap lap)

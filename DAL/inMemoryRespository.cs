@@ -110,11 +110,9 @@ public class InMemoryRepository : IRepository
     public void RemoveCarTyre(int carId, TyreType tyreType)
     {
         var carTyre = CarTyres.FirstOrDefault(ct => ct.Car.Id == carId && ct.Tyre == tyreType);
-        if (carTyre != null)
-        {
-            carTyre.Car.CarTyres.Remove(carTyre);
-            CarTyres.Remove(carTyre);
-        }
+        if (carTyre == null) return;
+        carTyre.Car.CarTyres.Remove(carTyre);
+        CarTyres.Remove(carTyre);
     }
         
     public void CreateFastestLap(FastestLap lap) => FastestLaps.Add(lap);

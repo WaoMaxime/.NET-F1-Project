@@ -3,14 +3,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 namespace DataAccessLayer.EF;
 
-public class F1CarDbContext(DbContextOptions<F1CarDbContext> options, DbSet<F1Car> f1Cars, DbSet<FastestLap> fastestLaps, DbSet<Race> races, DbSet<CarTyre> carTyres) : DbContext(options)
+public class F1CarDbContext(DbContextOptions<F1CarDbContext> options) : DbContext(options)
 {
-    public DbSet<F1Car> F1Cars { get; } = f1Cars;
-    public DbSet<FastestLap> FastestLaps { get; } = fastestLaps;
+    public DbSet<F1Car> F1Cars { get; set; }
+    
+    public DbSet<FastestLap> FastestLaps { get; set; }
 
-    public DbSet<Race> Races { get; } = races;
+    public DbSet<Race> Races { get; set; }
 
-    public DbSet<CarTyre> CarTyres { get; } = carTyres;
+    public DbSet<CarTyre> CarTyres { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

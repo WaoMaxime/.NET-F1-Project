@@ -6,8 +6,9 @@ using UI_CA;
 var optionsBuilder = new DbContextOptionsBuilder<F1CarDbContext>()
     .UseSqlite("Data Source=f1cars.db");
 
-using var context = new F1CarDbContext(optionsBuilder.Options, null, null, null, null);
-var databaseCreated = context.CreateDatabase(); 
+using var context = new F1CarDbContext(optionsBuilder.Options);
+var databaseCreated = context.Database.EnsureCreated();
+
 if (databaseCreated)
 {
     Console.WriteLine("Seeding the database...");
