@@ -73,11 +73,21 @@ public class Repository : IRepository
             .ThenInclude(fc => fc.CarTyres);
     }
     
-    public IEnumerable<CarTyre> ReadCarTyresForCarById(int carId)
+    public F1Car ReadF1CarWithDetails(int id)
     {
-        return _context.CarTyres.Where(ct => ct.Car.Id == carId).ToList();
+        return _context.F1Cars
+            .Include(fc => fc.CarTyres) 
+            .ThenInclude(ct => ct.Race) 
+            .FirstOrDefault(fc => fc.Id == id);
     }
     
+    public CarTyre ReadTyreById(int id)
+    {
+        return _context.CarTyres
+            .Include(ct => ct.Car) 
+            .FirstOrDefault(ct => ct.CarId == id);
+    }
+
     public void AddCarTyre(CarTyre carTyre)
     {
         _context.CarTyres.Add(carTyre);
@@ -111,5 +121,4 @@ public class Repository : IRepository
         _context.Set<Race>().Add(race);
         _context.SaveChanges();
     }
-    
 }

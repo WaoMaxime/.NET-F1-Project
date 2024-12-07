@@ -9,7 +9,6 @@ namespace BusinessLayer
         IEnumerable<FastestLap> GetFastestLapsByCircuit(string circuit);
         IEnumerable<F1Car> GetAllF1CarsWithDetails();
         IEnumerable<Race> GetAllRacesWithDetails();
-        IEnumerable<CarTyre> GetCarTyresForCarById(int carId);
         IEnumerable<F1Car> GetF1CarsByTeam(F1Team team);
         IEnumerable<F1Car> GetAllF1Cars();
         IEnumerable<Race> GetAllRaces();
@@ -19,6 +18,8 @@ namespace BusinessLayer
         void RemoveTyreFromCar(int carId, TyreType tyreType);
         FastestLap AddFastestLap(string circuit, int airTemperature, int trackTemperature, TimeSpan lapTime, DateTime dateOfRecord, F1Car car, Race race);
         F1Car GetF1Car(int id);
+        F1Car GetF1CarWithDetails(int id);
+        CarTyre GetTyreById(int id);
         Race GetRace(int id);
     }
 }

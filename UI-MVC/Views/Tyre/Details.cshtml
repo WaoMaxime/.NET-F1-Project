@@ -1,0 +1,24 @@
+﻿@model Domain.CarTyre
+
+<h1>Tyre Details</h1>
+
+<table class="table">
+    <tr>
+        <th>Property</th>
+        <th>Value</th>
+    </tr>
+    <tr>
+        <td>Tyre Type</td>
+        <td>@Model.Tyre.ToFriendlyString()</td>
+    </tr>
+    <tr>
+        <td>Tyre Pressure</td>
+        <td>@Model.TyrePressure psi</td>
+    </tr>
+    <tr>
+        <td>Operational Temperature</td>
+        <td>@Model.OperationalTemperature °C</td>
+    </tr>
+</table>
+
+

@@ -58,7 +58,7 @@ public class InMemoryRepository : IRepository
     }
         
     public F1Car ReadF1Car(int id) => F1Cars.FirstOrDefault(car => car.Id == id);
-        
+    public F1Car ReadF1CarWithDetails(int id) => F1Cars.FirstOrDefault(car => car.Id == id);
     public Race ReadRace(int id) => Races.FirstOrDefault(race => race.Id == id);
         
     public IEnumerable<FastestLap> ReadFastestLapsByTime(TimeSpan lapTime) => FastestLaps.Where(lap => lap.LapTime == lapTime);
@@ -95,12 +95,12 @@ public class InMemoryRepository : IRepository
             return race;
         }).ToList();
     }
-        
-    public IEnumerable<CarTyre> ReadCarTyresForCarById(int carId)
+    
+    public CarTyre ReadTyreById(int id)
     {
-        return CarTyres.Where(ct => ct.Car.Id == carId).ToList();
+        return CarTyres.FirstOrDefault(ct => ct.CarId == id);
     }
-        
+    
     public void AddCarTyre(CarTyre carTyre)
     {
         carTyre.Car.CarTyres.Add(carTyre);

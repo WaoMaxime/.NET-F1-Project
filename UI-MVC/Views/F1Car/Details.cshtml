@@ -1,13 +1,42 @@
 ﻿@model Domain.F1Car
 
-<h1>Car Details</h1>
-<ul>
-    <li><strong>Team:</strong> @Model.Team</li>
-    <li><strong>Chasis:</strong> @Model.Chasis</li>
-    <li><strong>Constructors Position:</strong> @Model.ConstructorsPosition</li>
-    <li><strong>Drivers Positions:</strong> @Model.DriversPositions</li>
-    <li><strong>Manufacture Date:</strong> @Model.ManufactureDate.ToString("dd/MM/yyyy")</li>
-    <li><strong>Tyres:</strong> @Model.Tyres</li>
-    <li><strong>Engine Power:</strong> @(Model.EnginePower.HasValue ? $"{Model.EnginePower.Value} HP" : "unknown")</li>
-</ul>
-<p><a asp-action="Index">Back to List</a></p>
+<h1>F1 Car Details</h1>
+
+<table class="table">
+    <tr><th>Property</th><th>Value</th></tr>
+    <tr><td>Team</td><td>@Model.Team</td></tr>
+    <tr><td>Chasis</td><td>@Model.Chasis</td></tr>
+    <tr><td>Constructors Position</td><td>@Model.ConstructorsPosition</td></tr>
+    <tr><td>Drivers Positions</td><td>@Model.DriversPositions</td></tr>
+    <tr><td>Manufacture Date</td><td>@Model.ManufactureDate.ToString("dd/MM/yyyy")</td></tr>
+    <tr><td>Tyres</td><td>@Model.Tyres</td></tr>
+    <tr><td>Engine Power</td><td>@(Model.EnginePower.HasValue ? $"{Model.EnginePower.Value} HP" : "unknown")</td></tr>
+</table>
+
+<h2>Tyre Setups</h2>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Tyre Type</th>
+        <th>Tyre Pressure</th>
+        <th>Operational Temperature</th>
+        <th>Race</th>
+        <th>Actions</th> 
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var tyre in Model.CarTyres)
+    {
+    <tr>
+        <td>@tyre.Tyre.ToFriendlyString()</td>
+        <td>@tyre.TyrePressure psi</td>
+        <td>@tyre.OperationalTemperature °C</td>
+        <td>@(tyre.Race != null ? tyre.Race.Name : "No Race")</td>
+        <td>
+            <a asp-controller="Tyre" asp-action="Details" asp-route-id="@tyre.CarId" class="btn btn-primary btn-sm">Details</a>
+        </td>
+    </tr>
+    }
+    </tbody>
+</table>
+

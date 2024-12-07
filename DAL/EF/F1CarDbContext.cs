@@ -19,7 +19,7 @@ public class F1CarDbContext : DbContext
     {
         if (optionsBuilder.IsConfigured) return;
 
-        optionsBuilder.UseSqlite("Data Source=f1database.db");
+        optionsBuilder.UseSqlite("Data Source=f1cars.db");
         optionsBuilder.LogTo(Console.WriteLine, LogLevel.Information);
     }
 

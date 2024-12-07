@@ -3,29 +3,48 @@
 <h1>Add New F1 Car</h1>
 
 <form asp-action="Add" method="post">
-    <div>
-        <label>Team</label>
-        <select asp-for="Team" asp-items="Html.GetEnumSelectList<Domain.F1Team>()"></select>
+    <div class="form-group">
+        <label asp-for="Team" class="form-label"></label>
+        <select asp-for="Team" asp-items="@(new SelectList(Enum.GetValues<F1Team>()))" class="form-control"></select>
+        <span asp-validation-for="Team" class="text-danger"></span>
     </div>
-    <div>
-        <label>Chasis</label>
-        <input asp-for="Chasis" />
+
+    <div class="form-group">
+        <label asp-for="Chasis" class="form-label"></label>
+        <input asp-for="Chasis" class="form-control" />
+        <span asp-validation-for="Chasis" class="text-danger"></span>
     </div>
-    <div>
-        <label>Constructors Position</label>
-        <input asp-for="ConstructorsPosition" />
+
+    <div class="form-group">
+        <label asp-for="ConstructorsPosition" class="form-label"></label>
+        <input asp-for="ConstructorsPosition" type="number" class="form-control" />
+        <span asp-validation-for="ConstructorsPosition" class="text-danger"></span>
     </div>
-    <div>
-        <label>Drivers Positions</label>
-        <input asp-for="DriversPositions" />
+
+    <div class="form-group">
+        <label asp-for="DriversPositions" class="form-label"></label>
+        <input asp-for="DriversPositions" type="number" class="form-control" />
+        <span asp-validation-for="DriversPositions" class="text-danger"></span>
     </div>
-    <div>
-        <label>Manufacture Date</label>
-        <input asp-for="ManufactureDate" type="date" />
+
+    <div class="form-group">
+        <label asp-for="ManufactureDate" class="form-label"></label>
+        <input asp-for="ManufactureDate" class="form-control" type="text" value="@Model?.ManufactureDate.ToString("dd/MM/yyyy")" />
+        <span asp-validation-for="ManufactureDate" class="text-danger"></span>
     </div>
-    <div>
-        <label>Tyres</label>
-        <select asp-for="Tyres" asp-items="Html.GetEnumSelectList<Domain.TyreType>()"></select>
+
+    <div class="form-group">
+        <label asp-for="Tyres" class="form-label"></label>
+        <select asp-for="Tyres" asp-items="@(new SelectList(Enum.GetValues<TyreType>()))" class="form-control"></select>
+        <span asp-validation-for="Tyres" class="text-danger"></span>
     </div>
-    <button type="submit">Save</button>
+
+    <div class="form-group">
+        <label asp-for="EnginePower" class="form-label"></label>
+        <input asp-for="EnginePower" type="number" class="form-control" />
+        <span asp-validation-for="EnginePower" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Car</button>
 </form>
+

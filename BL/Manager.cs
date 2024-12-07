@@ -10,8 +10,7 @@ public class Manager : IManager
     {
         _repository = repository;
     }
-
-
+    
     public IEnumerable<FastestLap> GetFastestLapByTime(TimeSpan lapTime)
     {
         return _repository.ReadFastestLapsByTime(lapTime);
@@ -30,12 +29,7 @@ public class Manager : IManager
     {
         return _repository.ReadAllRacesWithFastestLapsAndCars();
     }
-        
-    public IEnumerable<CarTyre> GetCarTyresForCarById(int carId)
-    {
-        return _repository.ReadCarTyresForCarById(carId);
-    }
-        
+    
     public IEnumerable<F1Car> GetF1CarsByTeam(F1Team team) => _repository.ReadF1CarsByTeam(team);
         
     public IEnumerable<F1Car> GetAllF1Cars() => _repository.ReadAllF1Cars();
@@ -94,7 +88,16 @@ public class Manager : IManager
     }
         
     public F1Car GetF1Car(int id) => _repository.ReadF1Car(id);
-        
+    public F1Car GetF1CarWithDetails(int id)
+    {
+        return _repository.ReadF1CarWithDetails(id);
+    }
+
+    public CarTyre GetTyreById(int id)
+    {
+        return _repository.ReadTyreById(id);
+    }
+
     public Race GetRace(int id) => _repository.ReadRace(id);
         
     private static void ValidateModel(object model)
