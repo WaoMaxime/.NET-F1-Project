@@ -2,41 +2,49 @@
 using DataAccessLayer;
 using Domain;
 namespace BusinessLayer;
-public class Manager(IRepository repository) : IManager
+public class Manager : IManager
 {
-    public IEnumerable<FastestLap> GetFastestLapByTime(TimeSpan lapTime)
+    private readonly IRepository _repository;
+
+    public Manager(IRepository repository)
     {
-        return repository.ReadFastestLapsByTime(lapTime);
+        _repository = repository;
     }
 
-    public IEnumerable<FastestLap> GetAllFastestLaps() => repository.ReadAllFastestLaps();
 
-    public IEnumerable<FastestLap> GetFastestLapsByCircuit(string circuit) => repository.ReadFastestLapsByCircuit(circuit);
+    public IEnumerable<FastestLap> GetFastestLapByTime(TimeSpan lapTime)
+    {
+        return _repository.ReadFastestLapsByTime(lapTime);
+    }
+
+    public IEnumerable<FastestLap> GetAllFastestLaps() => _repository.ReadAllFastestLaps();
+
+    public IEnumerable<FastestLap> GetFastestLapsByCircuit(string circuit) => _repository.ReadFastestLapsByCircuit(circuit);
 
     public IEnumerable<F1Car> GetAllF1CarsWithDetails()
     {
-        return repository.ReadAllF1CarsWithTyresAndFastestLaps();
+        return _repository.ReadAllF1CarsWithTyresAndFastestLaps();
     }
 
     public IEnumerable<Race> GetAllRacesWithDetails()
     {
-        return repository.ReadAllRacesWithFastestLapsAndCars();
+        return _repository.ReadAllRacesWithFastestLapsAndCars();
     }
         
     public IEnumerable<CarTyre> GetCarTyresForCarById(int carId)
     {
-        return repository.ReadCarTyresForCarById(carId);
+        return _repository.ReadCarTyresForCarById(carId);
     }
         
-    public IEnumerable<F1Car> GetF1CarsByTeam(F1Team team) => repository.ReadF1CarsByTeam(team);
+    public IEnumerable<F1Car> GetF1CarsByTeam(F1Team team) => _repository.ReadF1CarsByTeam(team);
         
-    public IEnumerable<F1Car> GetAllF1Cars() => repository.ReadAllF1Cars();
+    public IEnumerable<F1Car> GetAllF1Cars() => _repository.ReadAllF1Cars();
         
-    public IEnumerable<Race> GetAllRaces() => repository.ReadAllRaces();
+    public IEnumerable<Race> GetAllRaces() => _repository.ReadAllRaces();
 
     public void AddTyreToCar(int carId, TyreType tyreType, int tyrePressure, int operationalTemperature)
     {
-        var car = repository.ReadF1Car(carId);
+        var car = _repository.ReadF1Car(carId);
         if (car == null) throw new Exception("Car not found!");
 
         var newCarTyre = new CarTyre
@@ -47,24 +55,24 @@ public class Manager(IRepository repository) : IManager
             OperationalTemperature = operationalTemperature
         };
 
-        repository.AddCarTyre(newCarTyre);
+        _repository.AddCarTyre(newCarTyre);
     } 
         
     public void AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, double? enginePower = null)
     {
         var newCar = new F1Car(team, chasis, constructorsPosition, driversPositions, manufactureDate, tyres, enginePower);
         ValidateModel(newCar);
-        repository.CreateF1Car(newCar);
+        _repository.CreateF1Car(newCar);
     }
         
     public void AddRace(Race race)
     {
-        repository.CreateRace(race);
+        _repository.CreateRace(race);
     }
         
     public void RemoveTyreFromCar(int carId, TyreType tyreType)
     {
-        repository.RemoveCarTyre(carId, tyreType);
+        _repository.RemoveCarTyre(carId, tyreType);
     }
         
     public FastestLap AddFastestLap(
@@ -81,13 +89,13 @@ public class Manager(IRepository repository) : IManager
 
         var newLap = new FastestLap(circuit, airTemperature, trackTemperature, lapTime, dateOfRecord, car, race);
         ValidateModel(newLap);
-        repository.CreateFastestLap(newLap);
+        _repository.CreateFastestLap(newLap);
         return newLap;
     }
         
-    public F1Car GetF1Car(int id) => repository.ReadF1Car(id);
+    public F1Car GetF1Car(int id) => _repository.ReadF1Car(id);
         
-    public Race GetRace(int id) => repository.ReadRace(id);
+    public Race GetRace(int id) => _repository.ReadRace(id);
         
     private static void ValidateModel(object model)
     {

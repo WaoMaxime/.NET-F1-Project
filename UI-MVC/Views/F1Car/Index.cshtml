@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Domain.F1Car>
+
+<h1>All F1 Cars</h1>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Team</th>
+        <th>Chasis</th>
+        <th># Constructors Position</th>
+        <th>Drivers Position</th>
+        <th>Manufacture Date</th>
+        <th>Tyres</th>
+        <th>Engine Power</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var car in Model)
+    {
+    <tr>
+        <td>@car.Team</td>
+        <td>@car.Chasis</td>
+        <td>@car.ConstructorsPosition</td>
+        <td>@car.DriversPositions</td>
+        <td>@(car.ManufactureDate.ToString("dd/MM/yyyy"))</td>
+        <td>@car.Tyres</td>
+        <td>@(car.EnginePower.HasValue ? $"{car.EnginePower.Value} HP" : "unknown")</td>
+        <td>
+            <a asp-action="Details" asp-route-id="@car.Id">Details</a>
+        </td>
+    </tr>
+    }
+    </tbody>
+</table>
+
+<footer>
+    <p>&copy; KdG - Privacy - Maxime Blondeel</p>
+</footer>

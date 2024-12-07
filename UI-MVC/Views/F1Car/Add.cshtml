@@ -1,0 +1,31 @@
+﻿@model Domain.F1Car
+
+<h1>Add New F1 Car</h1>
+
+<form asp-action="Add" method="post">
+    <div>
+        <label>Team</label>
+        <select asp-for="Team" asp-items="Html.GetEnumSelectList<Domain.F1Team>()"></select>
+    </div>
+    <div>
+        <label>Chasis</label>
+        <input asp-for="Chasis" />
+    </div>
+    <div>
+        <label>Constructors Position</label>
+        <input asp-for="ConstructorsPosition" />
+    </div>
+    <div>
+        <label>Drivers Positions</label>
+        <input asp-for="DriversPositions" />
+    </div>
+    <div>
+        <label>Manufacture Date</label>
+        <input asp-for="ManufactureDate" type="date" />
+    </div>
+    <div>
+        <label>Tyres</label>
+        <select asp-for="Tyres" asp-items="Html.GetEnumSelectList<Domain.TyreType>()"></select>
+    </div>
+    <button type="submit">Save</button>
+</form>

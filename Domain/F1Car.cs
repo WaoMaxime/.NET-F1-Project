@@ -1,5 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
 namespace Domain;
+
 public enum F1Team
 {
     Mercedes,
@@ -9,58 +13,78 @@ public enum F1Team
     AstonMartin
 }
 
-public class F1Car(
-    F1Team team,
-    string chasis,
-    int constructorsPosition,
-    double driversPositions,
-    DateTime manufactureDate,
-    TyreType tyres,
-    double? enginePower = null)
-    : IValidatableObject
+public class F1Car : IValidatableObject
 {
     [Key]
-    public int Id { get; init; }
+    public int Id { get; init; } // Primary key
 
     [Required]
-    public F1Team Team { get; set; } = team;
+    public F1Team Team { get; set; }
 
     [Required]
     [StringLength(50, MinimumLength = 2)]
-    public string Chasis { get; set; } = chasis;
+    public string Chasis { get; set; }
 
     [Range(1, 10)]
-    public int ConstructorsPosition { get; set; } = constructorsPosition;
+    public int ConstructorsPosition { get; set; }
 
     [Range(0, 50)]
-    public double DriversPositions { get; set; } = driversPositions;
+    public double DriversPositions { get; set; }
 
-    public DateTime ManufactureDate { get; set; } = manufactureDate;
+    public DateTime ManufactureDate { get; set; }
 
     [Required]
-    public TyreType Tyres { get; set; } = tyres;
+    public TyreType Tyres { get; set; }
 
     [Range(500, 1500)]
-    public double? EnginePower { get; set; } = enginePower;
-
+    public double? EnginePower { get; set; }
+    
     public ICollection<FastestLap> FastestLaps { get; set; } = new List<FastestLap>();
-       
     public ICollection<CarTyre> CarTyres { get; set; } = new List<CarTyre>();
-
-    public F1Car() : this(F1Team.Mercedes, "Default Chassis", 1, 1.0, DateTime.Now.AddYears(-1), TyreType.Medium, 1000)
+    
+    public F1Car(
+        F1Team team,
+        string chasis,
+        int constructorsPosition,
+        double driversPositions,
+        DateTime manufactureDate,
+        TyreType tyres,
+        double? enginePower = null)
     {
+        Team = team;
+        Chasis = chasis;
+        ConstructorsPosition = constructorsPosition;
+        DriversPositions = driversPositions;
+        ManufactureDate = manufactureDate;
+        Tyres = tyres;
+        EnginePower = enginePower;
     }
-
+    
+    public F1Car()
+    {
+        Team = F1Team.Mercedes;
+        Chasis = "Default Chassis";
+        ConstructorsPosition = 1;
+        DriversPositions = 1.0;
+        ManufactureDate = DateTime.Now.AddYears(-1);
+        Tyres = TyreType.Medium;
+        EnginePower = 1000;
+    }
+    
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        if (EnginePower is <= 0)
+        if (EnginePower <= 0)
         {
-            yield return new ValidationResult("Engine Power must be a positive value.", [nameof(EnginePower)]);
+            yield return new ValidationResult(
+                "Engine Power must be a positive value.",
+                new[] { nameof(EnginePower) });
         }
 
         if (ManufactureDate > DateTime.Now)
         {
-            yield return new ValidationResult("Manufacture date cannot be in the future.", [nameof(ManufactureDate)]);
+            yield return new ValidationResult(
+                "Manufacture date cannot be in the future.",
+                new[] { nameof(ManufactureDate) });
         }
     }
 }

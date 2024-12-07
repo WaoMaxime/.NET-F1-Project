@@ -1,0 +1,13 @@
+﻿@model Domain.F1Car
+
+<h1>Car Details</h1>
+<ul>
+    <li><strong>Team:</strong> @Model.Team</li>
+    <li><strong>Chasis:</strong> @Model.Chasis</li>
+    <li><strong>Constructors Position:</strong> @Model.ConstructorsPosition</li>
+    <li><strong>Drivers Positions:</strong> @Model.DriversPositions</li>
+    <li><strong>Manufacture Date:</strong> @Model.ManufactureDate.ToString("dd/MM/yyyy")</li>
+    <li><strong>Tyres:</strong> @Model.Tyres</li>
+    <li><strong>Engine Power:</strong> @(Model.EnginePower.HasValue ? $"{Model.EnginePower.Value} HP" : "unknown")</li>
+</ul>
+<p><a asp-action="Index">Back to List</a></p>
