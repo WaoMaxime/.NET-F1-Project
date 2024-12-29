@@ -35,8 +35,13 @@ public class Manager : IManager
     public IEnumerable<F1Car> GetAllF1Cars() => _repository.ReadAllF1Cars();
         
     public IEnumerable<Race> GetAllRaces() => _repository.ReadAllRaces();
+    
+    public IEnumerable<CarTyre> GetCarTyresForCarById(int carId)
+    {
+        return _repository.ReadCarTyresForCarById(carId);
+    }
 
-    public void AddTyreToCar(int carId, TyreType tyreType, int tyrePressure, int operationalTemperature)
+    public CarTyre AddTyreToCar(int carId, TyreType tyreType, int tyrePressure, int operationalTemperature)
     {
         var car = _repository.ReadF1Car(carId);
         if (car == null) throw new Exception("Car not found!");
@@ -48,8 +53,8 @@ public class Manager : IManager
             TyrePressure = tyrePressure,
             OperationalTemperature = operationalTemperature
         };
-
         _repository.AddCarTyre(newCarTyre);
+        return newCarTyre;
     } 
         
     public void AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, double? enginePower = null)

@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Domain;
 
-namespace Domain;
+namespace UI.DTO;
 
-public class CarTyre
+public class CarTyreDto
 {
     [Required]
     public int CarId { get; set; }
-
-    public F1Car Car { get; set; }
 
     [Required]
     public TyreType Tyre { get; set; }
@@ -17,10 +16,4 @@ public class CarTyre
 
     [Range(50, 150)]
     public int OperationalTemperature { get; set; }
-
-    public int? RaceId { get; set;} 
-
-    public Race Race { get; set; }
 }
-
-

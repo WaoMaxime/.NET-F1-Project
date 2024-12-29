@@ -12,10 +12,11 @@ namespace BusinessLayer
         IEnumerable<F1Car> GetF1CarsByTeam(F1Team team);
         IEnumerable<F1Car> GetAllF1Cars();
         IEnumerable<Race> GetAllRaces();
-        void AddTyreToCar(int carId, TyreType tyreType, int tyrePressure, int operationalTemperature);
+        IEnumerable<CarTyre> GetCarTyresForCarById(int carId);
         void AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, double? enginePower = null);
         void AddRace(Race race);
         void RemoveTyreFromCar(int carId, TyreType tyreType);
+        CarTyre AddTyreToCar(int carId, TyreType tyreType, int tyrePressure, int operationalTemperature);
         FastestLap AddFastestLap(string circuit, int airTemperature, int trackTemperature, TimeSpan lapTime, DateTime dateOfRecord, F1Car car, Race race);
         F1Car GetF1Car(int id);
         F1Car GetF1CarWithDetails(int id);

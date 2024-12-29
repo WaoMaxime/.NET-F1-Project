@@ -16,7 +16,7 @@ public enum F1Team
 public class F1Car : IValidatableObject
 {
     [Key]
-    public int Id { get; init; } 
+    public int Id { get; set; } 
 
     [Required]
     public F1Team Team { get; set; }

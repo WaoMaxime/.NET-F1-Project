@@ -16,6 +16,7 @@ public interface IRepository
     IEnumerable<Race> ReadAllRaces();
     IEnumerable<F1Car> ReadAllF1CarsWithTyresAndFastestLaps();
     IEnumerable<Race> ReadAllRacesWithFastestLapsAndCars();
+    IEnumerable<CarTyre> ReadCarTyresForCarById(int carId);
     void AddCarTyre(CarTyre carTyre);
     void RemoveCarTyre(int carId, TyreType tyreType);
     void CreateFastestLap(FastestLap lap);

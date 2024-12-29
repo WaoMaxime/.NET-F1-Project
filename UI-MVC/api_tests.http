@@ -1,0 +1,23 @@
+﻿### Get all fastest laps
+GET http://localhost:5000/api/FastestLapApi
+Accept: application/json
+
+###
+
+### Create a new fastest lap
+POST http://localhost:5000/api/FastestLapApi
+Content-Type: application/json
+
+{
+  "circuit": "Monaco GP",
+  "airTemperature": 25,
+  "trackTemperature": 35,
+  "lapTime": "1.11.223",
+  "dateOfRecord": "2023-05-28T00:00:00",
+  "car": {
+    "id": 1
+  },
+  "race": {
+    "id": 1
+  }
+}

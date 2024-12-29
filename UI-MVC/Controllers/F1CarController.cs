@@ -42,7 +42,6 @@ public class F1CarController : Controller
         {
             return View(newCar); 
         }
-        
         _manager.AddF1Car(
             newCar.Team,
             newCar.Chasis,

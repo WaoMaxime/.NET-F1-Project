@@ -73,6 +73,14 @@ public class Repository : IRepository
             .ThenInclude(fc => fc.CarTyres);
     }
     
+    public IEnumerable<CarTyre> ReadCarTyresForCarById(int carId)
+    {
+        return _context.CarTyres
+            .Where(ct => ct.CarId == carId)
+            .Include(ct => ct.Car)
+            .ToList();
+    }
+    
     public F1Car ReadF1CarWithDetails(int id)
     {
         return _context.F1Cars

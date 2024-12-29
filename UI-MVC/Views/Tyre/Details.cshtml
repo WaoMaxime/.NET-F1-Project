@@ -1,24 +1,30 @@
 ﻿@model Domain.CarTyre
 
-<h1>Tyre Details</h1>
+<h1>Tyre Details - @Model.Tyre.ToFriendlyString()</h1>
 
-<table class="table">
-    <tr>
-        <th>Property</th>
-        <th>Value</th>
-    </tr>
-    <tr>
-        <td>Tyre Type</td>
-        <td>@Model.Tyre.ToFriendlyString()</td>
-    </tr>
-    <tr>
-        <td>Tyre Pressure</td>
-        <td>@Model.TyrePressure psi</td>
-    </tr>
-    <tr>
-        <td>Operational Temperature</td>
-        <td>@Model.OperationalTemperature °C</td>
-    </tr>
+<h2>Existing CarTyres for Car - @Model.Car.Chasis</h2>
+<table class="table mt-3" id="tyreTableBody" data-car-id="@Model.CarId">
+    <tbody></tbody>
 </table>
+
+<h3>Add New Tyre</h3>
+<form id="addTyreForm">
+    <input type="hidden" id="carId" value="@Model.CarId"/>
+    <div class="form-group">
+        <label for="tyreType">Tyre Type</label>
+        <select id="tyreType" class="form-control"></select>
+    </div>
+    <div class="form-group">
+        <label for="tyrePressure">Tyre Pressure (PSI)</label>
+        <input id="tyrePressure" class="form-control" type="number" required/>
+    </div>
+    <div class="form-group">
+        <label for="operationalTemperature">Operational Temperature (°C)</label>
+        <input id="operationalTemperature" class="form-control" type="number" required/>
+    </div>
+    <button type="button" class="btn btn-primary" id="addTyreButton">Add Tyre</button>
+</form>
+
+<script src="/js/tyre/details.js" type="module"></script>
 
 

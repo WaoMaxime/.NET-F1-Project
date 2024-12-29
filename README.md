@@ -60,4 +60,58 @@ classDiagram
 
 ```
 
+## Sprint 6
+
+### Nieuwe Fastest Lap
+
+#### Request
+
+```http request
+POST http://localhost:5000/api/FastestLapApi
+Content-Type: application/json
+
+{
+  "circuit": "Monaco GP",
+  "airTemperature": 25,
+  "trackTemperature": 35,
+  "lapTime": "1.11.223",
+  "dateOfRecord": "2023-05-28T00:00:00",
+  "car": {
+    "id": 1
+  },
+  "race": {
+    "id": 1
+  }
+}
+```
+#### Response
+
+```http response
+
+HTTP/1.1 201 Created
+Content-Type: application/json
+Location: /api/FastestLapApi/1
+
+{
+  "id": 1,
+  "circuit": "Monaco GP",
+  "airTemperature": 25,
+  "trackTemperature": 35,
+  "lapTime": "1.11.223",
+  "dateOfRecord": "2023-05-28T00:00:00",
+  "car": {
+    "id": 1,
+    "chasis": "RB19",
+    ...
+  },
+  "race": {
+    "id": 1,
+    "name": "Monaco GP",
+    ...
+  }
+}
+```
+
+
+
 

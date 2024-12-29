@@ -4,7 +4,7 @@ namespace Domain;
 public class FastestLap
 {
     [Key]
-    public int Id { get; init; }
+    public int Id { get; set; }
 
     [Required]
     [StringLength(50, MinimumLength = 3)]
@@ -23,11 +23,11 @@ public class FastestLap
         
     public F1Car Car { get; set; }
 
-    public int CarId { get; init; }
+    public int CarId { get; set; }
         
     public Race Race { get; set; }
 
-    public int RaceId { get; init; }
+    public int RaceId { get; set; }
         
     public FastestLap(string circuit, int airTemperature, int trackTemperature, TimeSpan lapTime,
         DateTime dateOfRecord, F1Car car, Race race)

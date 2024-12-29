@@ -96,6 +96,13 @@ public class InMemoryRepository : IRepository
         }).ToList();
     }
     
+    public IEnumerable<CarTyre> ReadCarTyresForCarById(int carId)
+    {
+        return CarTyres
+            .Where(ct => ct.CarId == carId)
+            .ToList();
+    }
+    
     public CarTyre ReadTyreById(int id)
     {
         return CarTyres.FirstOrDefault(ct => ct.CarId == id);
