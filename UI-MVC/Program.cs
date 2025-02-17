@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Dependency Injection
 builder.Services.AddDbContext<F1CarDbContext>(options =>
-    options.UseSqlite("Data Source=f1car.db"));
+    options.UseSqlite("Data Source=f1cars.db"));
 builder.Services.AddScoped<IRepository, Repository>();
 builder.Services.AddScoped<IManager, Manager>();
 builder.Services.AddControllersWithViews()
@@ -21,9 +21,14 @@ builder.Services.AddControllersWithViews()
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
     });
 
+// KdG Live Monitoring
+builder.Services.AddLiveMonitoring();
+
 //Authenticatie
 builder.Services.AddAuthentication()
     .AddCookie();
+//Authorizatie
+builder.Services.AddAuthorization();
 //ASP.NET Identity
 builder.Services.AddDefaultIdentity<IdentityUser>()
     .AddEntityFrameworkStores<F1CarDbContext>(); // Ensure this exists
@@ -63,6 +68,7 @@ app.MapRazorPages(); //fundemental
 app.UseAndMapLiveMonitoring();
 app.UseStaticFiles();
 app.UseAuthorization();
+app.UseAuthentication();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

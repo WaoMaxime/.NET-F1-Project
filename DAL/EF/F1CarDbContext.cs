@@ -1,10 +1,12 @@
 ﻿using Domain;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace DataAccessLayer.EF;
 
-public class F1CarDbContext : DbContext
+public class F1CarDbContext : IdentityDbContext<IdentityUser>
 {
     public DbSet<F1Car> F1Cars { get; set; }
     public DbSet<FastestLap> FastestLaps { get; set; }

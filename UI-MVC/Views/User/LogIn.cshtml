@@ -1,0 +1,15 @@
+﻿@model dynamic
+
+@{
+ViewBag.Title = "Aanmelden";
+}
+
+
+
+<h2>Aanmelden</h2>
+<form action="/User/LogIn" method="post">
+    <input type="text" name="account" placeholder="gebruikersnaam"/>
+    <input type="text" name="password" placeholder="wachtwoord"/>
+    <button type="submit" value="register">Registreren</button>
+    <button type="submit" value="login">Aanmelden</button>
+</form>
