@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -39,6 +41,22 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/Home/Privacy">Privacy</a>
                 </li>
+                @if (!SignInManager.IsSignedIn(User))
+                {
+                    <li class="nav-item" id="login">
+                        <a class="nav-link" href="/User/LogIn">Login</a>
+                    </li>
+                
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="/User/Logout">Logout</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="text-info"></a>
+                    </li>
+                    }
             </ul>
         </nav>
     </header>
@@ -54,3 +72,4 @@
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+

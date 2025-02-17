@@ -45,10 +45,10 @@ using (var scope = app.Services.CreateScope())
     if (isDbCreated)
     {
         // seeding
-        DataSeeder dataSeeder = new DataSeeder();
+        var dataSeeder = new DataSeeder();
         dataSeeder.Seed(appDbContext);
-        UserManager<IdentityUser> userManager = scope.ServiceProvider.GetService<UserManager<IdentityUser>>();
-        UI.IdentitySeeder dataSeeder2 = new UI.IdentitySeeder(userManager);
+        var userManager = scope.ServiceProvider.GetService<UserManager<IdentityUser>>();
+        var dataSeeder2 = new UI.IdentitySeeder(userManager);
         await dataSeeder2.SeedAsync();
     }
 }
