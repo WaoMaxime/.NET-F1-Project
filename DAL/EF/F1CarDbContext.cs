@@ -112,8 +112,8 @@ public class F1CarDbContext : DbContext
             Console.WriteLine("Database already contains data. Skipping seeding.");
             return;
         }
-        
-        DataSeeder.Seed(this);
+        DataSeeder seeder = new DataSeeder();
+        seeder.Seed(this);
         SaveChanges();
         Console.WriteLine("Database seeded successfully.");
     }

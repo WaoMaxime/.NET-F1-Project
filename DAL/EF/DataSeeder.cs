@@ -1,9 +1,9 @@
 ﻿namespace DataAccessLayer.EF;
 using Domain;
 
-public static class DataSeeder
+public class DataSeeder
 {
-    public static void Seed(F1CarDbContext context)
+    public void Seed(F1CarDbContext context)
     {
         if (context.F1Cars.Any() || context.FastestLaps.Any() || context.Races.Any())
         {
