@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DataAccessLayer;
 using Domain;
+using Microsoft.AspNetCore.Identity;
+
 namespace BusinessLayer;
 public class Manager : IManager
 {
@@ -63,6 +65,13 @@ public class Manager : IManager
         ValidateModel(newCar);
         _repository.CreateF1Car(newCar);
     }
+    
+    public void AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, IdentityUser user ,double? enginePower = null)
+    {
+        var newCar = new F1Car(team, chasis, constructorsPosition, driversPositions, manufactureDate, tyres, user, enginePower);
+        ValidateModel(newCar);
+        _repository.CreateF1Car(newCar);
+    }
         
     public void AddRace(Race race)
     {
@@ -91,7 +100,7 @@ public class Manager : IManager
         _repository.CreateFastestLap(newLap);
         return newLap;
     }
-        
+    
     public F1Car GetF1Car(int id) => _repository.ReadF1Car(id);
     public F1Car GetF1CarWithDetails(int id)
     {

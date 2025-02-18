@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("IdentityDataContextConnection") ?? throw new InvalidOperationException("Connection string 'IdentityDataContextConnection' not found.");
 
 // Dependency Injection
 builder.Services.AddDbContext<F1CarDbContext>(options =>
@@ -67,8 +68,8 @@ app.UseRouting();
 app.MapRazorPages(); //fundemental
 app.UseAndMapLiveMonitoring();
 app.UseStaticFiles();
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

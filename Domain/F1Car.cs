@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace Domain;
 
@@ -39,8 +41,33 @@ public class F1Car : IValidatableObject
     [Range(500, 1500)]
     public double? EnginePower { get; set; }
     
+    public string UserId { get; set; }
+    
+    [ForeignKey("UserId")]
+    public IdentityUser User { get; set; }
+    
     public ICollection<FastestLap> FastestLaps { get; set; } = new List<FastestLap>();
     public ICollection<CarTyre> CarTyres { get; set; } = new List<CarTyre>();
+    
+    public F1Car(
+        F1Team team,
+        string chasis,
+        int constructorsPosition,
+        double driversPositions,
+        DateTime manufactureDate,
+        TyreType tyres, IdentityUser user,
+        double? enginePower = null)
+    {
+        Team = team;
+        Chasis = chasis;
+        ConstructorsPosition = constructorsPosition;
+        DriversPositions = driversPositions;
+        ManufactureDate = manufactureDate;
+        Tyres = tyres;
+        EnginePower = enginePower;
+        UserId = user.Id;
+        User = user;
+    }
     
     public F1Car(
         F1Team team,

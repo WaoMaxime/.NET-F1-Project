@@ -1,4 +1,6 @@
-﻿namespace DataAccessLayer.EF;
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace DataAccessLayer.EF;
 using Domain;
 
 public class DataSeeder
@@ -24,11 +26,11 @@ public class DataSeeder
         
         var cars = new List<F1Car>
         {
-            new(F1Team.RedBull, "RB19", 1, 1, new DateTime(2023, 2, 10), TyreType.Soft, 1050),
-            new(F1Team.Mercedes, "W14", 2, 2, new DateTime(2023, 3, 15), TyreType.Medium, 1020),
-            new(F1Team.Ferrari, "SF23", 3, 3, new DateTime(2023, 4, 20), TyreType.Hard, 1000),
-            new(F1Team.Mclaren, "MCL60", 4, 5, new DateTime(2023, 5, 10), TyreType.Medium, 950),
-            new(F1Team.AstonMartin, "AMR23", 5, 6, new DateTime(2023, 6, 18), TyreType.Hard, 980)
+            new(F1Team.RedBull, "RB19", 1, 1, new DateTime(2023, 2, 10), TyreType.Soft,1050),
+            new(F1Team.Mercedes, "W14", 2, 2, new DateTime(2023, 3, 15), TyreType.Medium,1020),
+            new(F1Team.Ferrari, "SF23", 3, 3, new DateTime(2023, 4, 20), TyreType.Hard ,1000),
+            new(F1Team.Mclaren, "MCL60", 4, 5, new DateTime(2023, 5, 10), TyreType.Medium ,950),
+            new(F1Team.AstonMartin, "AMR23", 5, 6, new DateTime(2023, 6, 18), TyreType.Hard,980)
         };
 
         context.AddRange(cars);

@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Microsoft.AspNetCore.Identity;
 
 namespace BusinessLayer
 {
@@ -14,6 +15,7 @@ namespace BusinessLayer
         IEnumerable<Race> GetAllRaces();
         IEnumerable<CarTyre> GetCarTyresForCarById(int carId);
         void AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, double? enginePower = null);
+        void AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, IdentityUser user, double? enginePower = null);
         void AddRace(Race race);
         void RemoveTyreFromCar(int carId, TyreType tyreType);
         CarTyre AddTyreToCar(int carId, TyreType tyreType, int tyrePressure, int operationalTemperature);

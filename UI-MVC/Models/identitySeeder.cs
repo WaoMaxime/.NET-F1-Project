@@ -41,12 +41,15 @@ public class IdentitySeeder
                 EmailConfirmed = true
             });
         }
-
         int count = 0;
         foreach (IdentityUser user in users)
         {
             count++;
-            await _userManager.CreateAsync(user, $"User{count}xx!");
+            var result = await _userManager.CreateAsync(user, "Gebruiker_1234");
+            if (!result.Succeeded)
+            {
+                throw new Exception(result.Errors.First().Description);
+            }
         }
     }
 }

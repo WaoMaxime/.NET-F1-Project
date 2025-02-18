@@ -10,6 +10,7 @@ public class TyreController : Controller
         _manager = manager;
     }
 
+    
     public IActionResult Details(int id)
     {
         var tyre = _manager.GetTyreById(id);

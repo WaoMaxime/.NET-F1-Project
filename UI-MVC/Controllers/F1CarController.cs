@@ -1,16 +1,22 @@
 ﻿using BusinessLayer;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace UI.Controllers;
 
+
+[Authorize] // moet ingelogd zijn
 public class F1CarController : Controller
 {
     private readonly IManager _manager;
-
-    public F1CarController(IManager manager)
+    private readonly UserManager<IdentityUser> _userManager;
+    
+    public F1CarController(IManager manager, UserManager<IdentityUser> userManager)
     {
         _manager = manager;
+        _userManager = userManager;
     }
 
     public IActionResult Index()
@@ -36,12 +42,15 @@ public class F1CarController : Controller
     }
 
     [HttpPost]
-    public IActionResult Add(F1Car newCar)
+    public async Task<IActionResult> Add(F1Car newCar)
     {
         if (!ModelState.IsValid)
         {
             return View(newCar); 
         }
+        
+        await _userManager.GetUserAsync(User);
+        
         _manager.AddF1Car(
             newCar.Team,
             newCar.Chasis,
@@ -49,6 +58,7 @@ public class F1CarController : Controller
             newCar.DriversPositions,
             newCar.ManufactureDate,
             newCar.Tyres,
+            newCar.User,
             newCar.EnginePower);
         
         return RedirectToAction("Index");
