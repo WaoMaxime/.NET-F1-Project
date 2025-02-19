@@ -49,7 +49,7 @@ using (var scope = app.Services.CreateScope())
         var dataSeeder = new DataSeeder();
         dataSeeder.Seed(appDbContext);
         var userManager = scope.ServiceProvider.GetService<UserManager<IdentityUser>>();
-        var dataSeeder2 = new UI.IdentitySeeder(userManager);
+        var dataSeeder2 = new UI.IdentitySeeder(userManager, appDbContext);
         await dataSeeder2.SeedAsync();
     }
 }

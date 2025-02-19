@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using DataAccessLayer.EF;
+using Domain;
+using Microsoft.AspNetCore.Identity;
 
 namespace UI;
 
@@ -6,10 +8,12 @@ public class IdentitySeeder
 {
 
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly F1CarDbContext _context;
 
-    public IdentitySeeder(UserManager<IdentityUser> userManager)
+    public IdentitySeeder(UserManager<IdentityUser> userManager, F1CarDbContext context)
     {
         _userManager = userManager;
+        _context = context;
     }
 
     public async Task SeedAsync()
@@ -41,15 +45,23 @@ public class IdentitySeeder
                 EmailConfirmed = true
             });
         }
-        int count = 0;
+
         foreach (IdentityUser user in users)
         {
-            count++;
             var result = await _userManager.CreateAsync(user, "Gebruiker_1234");
             if (!result.Succeeded)
             {
                 throw new Exception(result.Errors.First().Description);
             }
         }
+        //link users to existing domain data
+
+        int count = 0;
+        foreach (F1Car car in _context.F1Cars)
+        {
+            car.User = users[count];
+            count++;
+        }
+        await _context.SaveChangesAsync();
     }
 }

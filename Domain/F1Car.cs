@@ -41,11 +41,7 @@ public class F1Car : IValidatableObject
     [Range(500, 1500)]
     public double? EnginePower { get; set; }
     
-    public string UserId { get; set; }
-    
-    [ForeignKey("UserId")]
     public IdentityUser User { get; set; }
-    
     public ICollection<FastestLap> FastestLaps { get; set; } = new List<FastestLap>();
     public ICollection<CarTyre> CarTyres { get; set; } = new List<CarTyre>();
     
@@ -65,7 +61,6 @@ public class F1Car : IValidatableObject
         ManufactureDate = manufactureDate;
         Tyres = tyres;
         EnginePower = enginePower;
-        UserId = user.Id;
         User = user;
     }
     

@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
+
 namespace Domain;
 
 public class FastestLap
@@ -28,6 +30,8 @@ public class FastestLap
     public Race Race { get; set; }
 
     public int RaceId { get; set; }
+    
+    public IdentityUser User { get; set; }
         
     public FastestLap(string circuit, int airTemperature, int trackTemperature, TimeSpan lapTime,
         DateTime dateOfRecord, F1Car car, Race race)

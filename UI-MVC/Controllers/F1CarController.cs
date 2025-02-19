@@ -49,9 +49,9 @@ public class F1CarController : Controller
             return View(newCar); 
         }
         
-        await _userManager.GetUserAsync(User);
+        newCar.User = await _userManager.GetUserAsync(User);
         
-        _manager.AddF1Car(
+         _manager.AddF1Car(
             newCar.Team,
             newCar.Chasis,
             newCar.ConstructorsPosition,
@@ -60,7 +60,6 @@ public class F1CarController : Controller
             newCar.Tyres,
             newCar.User,
             newCar.EnginePower);
-        
         return RedirectToAction("Index");
     }
 }
