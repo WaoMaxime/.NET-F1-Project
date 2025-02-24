@@ -1,22 +1,27 @@
 ﻿using BusinessLayer;
+using DataAccessLayer.EF;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using UI.DTO;
 
 namespace UI.Controllers;
 
 
-[Authorize] // moet ingelogd zijn
 public class F1CarController : Controller
-{
+{  
+    
     private readonly IManager _manager;
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly F1CarDbContext _context;
     
-    public F1CarController(IManager manager, UserManager<IdentityUser> userManager)
+    
+    public F1CarController(IManager manager, UserManager<IdentityUser> userManager, F1CarDbContext context)
     {
         _manager = manager;
         _userManager = userManager;
+        _context = context;
     }
 
     public IActionResult Index()
@@ -25,23 +30,29 @@ public class F1CarController : Controller
         return View(cars);
     }
 
-    public IActionResult Details(int id)
+    public async Task<IActionResult> Details(int id)
     {
         var car = _manager.GetF1CarWithDetails(id);
         if (car == null)
         {
             return NotFound();
         }
+        
+        var maintainerUser = car.UserId != null ? await _userManager.FindByIdAsync(car.UserId) : null;
+        
+        ViewData["MaintainerUsername"] = maintainerUser?.UserName ?? "Unknown";
         return View(car);
     }
     
     [HttpGet]
+    [Authorize]
     public IActionResult Add()
     {
         return View();
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Add(F1Car newCar)
     {
         if (!ModelState.IsValid)

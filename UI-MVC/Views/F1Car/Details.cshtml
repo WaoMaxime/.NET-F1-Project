@@ -1,5 +1,7 @@
-﻿@model Domain.F1Car
-
+﻿@using Microsoft.AspNetCore.Identity
+@model Domain.F1Car
+@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<IdentityUser> SignInManager
 <h1>F1 Car Details</h1>
 
 <table class="table">
@@ -10,7 +12,48 @@
     <tr><td>Drivers Positions</td><td>@Model.DriversPositions</td></tr>
     <tr><td>Manufacture Date</td><td>@Model.ManufactureDate.ToString("dd/MM/yyyy")</td></tr>
     <tr><td>Tyres</td><td>@Model.Tyres</td></tr>
+    
+    @{
+        var maintainerUsername = ViewData["MaintainerUsername"] as string;
+        var currentUserId = UserManager.GetUserId(User);
+        var isOwner = Model.UserId == currentUserId;
+    }
+
+    @if (Model.EnginePower != null && isOwner && SignInManager.IsSignedIn(User))
+    {
+    <tr>
+        <td>Horsepower (HP)</td>
+        <td>
+            <div class="input-group" style="max-width: 200px; margin-bottom: 10px;">
+                <input type="number" id="horsepower" name="horsepower"
+                       value="@Model.EnginePower" step="1" min="0"
+                       class="form-control text-end">
+                <span class="input-group-text">HP</span>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm hp-button" data-car-id="@Model.Id">Update HP</button>
+        </td>
+    </tr>
+    }
+    else if (Model.EnginePower != null && SignInManager.IsSignedIn(User))
+    {
+    <tr>
+        <td>Horsepower (HP)</td>
+        <td>
+            <div class="input-group" style="max-width: 200px; margin-bottom: 10px;">
+                <input type="number" id="horsepower" name="horsepower"
+                       value="@Model.EnginePower" step="1" min="0"
+                       class="form-control text-end" readonly>
+                <span class="input-group-text">HP</span>
+            </div>
+            <span class="text-muted text-start d-block">Maintained by @maintainerUsername</span>
+        </td>
+    </tr>
+    }
+    else
+    {
     <tr><td>Engine Power</td><td>@(Model.EnginePower.HasValue ? $"{Model.EnginePower.Value} HP" : "unknown")</td></tr>
+    }
+
 </table>
 
 <h2>Tyre Setups</h2>
@@ -21,22 +64,25 @@
         <th>Tyre Pressure</th>
         <th>Operational Temperature</th>
         <th>Race</th>
-        <th>Actions</th> 
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
     @foreach (var tyre in Model.CarTyres)
     {
-    <tr>
-        <td>@tyre.Tyre.ToFriendlyString()</td>
-        <td>@tyre.TyrePressure psi</td>
-        <td>@tyre.OperationalTemperature °C</td>
-        <td>@(tyre.Race != null ? tyre.Race.Name : "No Race")</td>
-        <td>
-            <a asp-controller="Tyre" asp-action="Details" asp-route-id="@tyre.CarId" class="btn btn-primary btn-sm">Details</a>
-        </td>
-    </tr>
+        <tr>
+            <td>@tyre.Tyre.ToFriendlyString()</td>
+            <td>@tyre.TyrePressure psi</td>
+            <td>@tyre.OperationalTemperature °C</td>
+            <td>@(tyre.Race != null ? tyre.Race.Name : "No Race")</td>
+            <td>
+                <a asp-controller="Tyre" asp-action="Details" asp-route-id="@tyre.CarId" class="btn btn-primary btn-sm">Details</a>
+            </td>
+        </tr>
     }
     </tbody>
 </table>
+
+<script src="~/js/f1car/Update.js"></script>
+
 

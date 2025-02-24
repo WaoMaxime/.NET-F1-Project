@@ -4,6 +4,7 @@ using BusinessLayer;
 using DataAccessLayer;
 using DataAccessLayer.EF;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,20 @@ builder.Services.AddControllersWithViews()
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
     });
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        return Task.CompletedTask;
+    };
+});
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); 
+    });
+
 
 // KdG Live Monitoring
 builder.Services.AddLiveMonitoring();
@@ -31,7 +46,7 @@ builder.Services.AddAuthentication()
 //Authorizatie
 builder.Services.AddAuthorization();
 //ASP.NET Identity
-builder.Services.AddDefaultIdentity<IdentityUser>()
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<F1CarDbContext>(); // Ensure this exists
 
 var app = builder.Build();
@@ -49,7 +64,8 @@ using (var scope = app.Services.CreateScope())
         var dataSeeder = new DataSeeder();
         dataSeeder.Seed(appDbContext);
         var userManager = scope.ServiceProvider.GetService<UserManager<IdentityUser>>();
-        var dataSeeder2 = new UI.IdentitySeeder(userManager, appDbContext);
+        var roleManager = scope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
+        var dataSeeder2 = new UI.IdentitySeeder(userManager, appDbContext, roleManager);
         await dataSeeder2.SeedAsync();
     }
 }

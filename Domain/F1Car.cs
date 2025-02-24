@@ -41,7 +41,8 @@ public class F1Car : IValidatableObject
     [Range(500, 1500)]
     public double? EnginePower { get; set; }
     
-    public IdentityUser User { get; set; }
+    public string? UserId { get; set; }
+    public IdentityUser? User { get; set; }
     public ICollection<FastestLap> FastestLaps { get; set; } = new List<FastestLap>();
     public ICollection<CarTyre> CarTyres { get; set; } = new List<CarTyre>();
     

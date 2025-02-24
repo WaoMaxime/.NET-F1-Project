@@ -1,0 +1,27 @@
+﻿### 1️⃣ Probeer een nieuw record toe te voegen zonder ingelogd te zijn (moet falen)
+POST http://localhost:7084/api/ThirdEntity
+Content-Type: application/json
+
+{
+  "name": "Test Entity",
+  "description": "This is a test entity created without authentication."
+}
+
+### 2️⃣ Vraag een authenticatietoken aan (gebruik geldige inloggegevens)
+POST http://localhost:7084/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "YourSecurePassword123!"
+}
+
+### 3️⃣ Voeg een nieuw record toe als ingelogde gebruiker (moet slagen)
+POST http://localhost:7084/api/ThirdEntity
+Content-Type: application/json
+Authorization: Bearer {YOUR_ACCESS_TOKEN}
+
+{
+  "name": "Authenticated Test Entity",
+  "description": "This entity is created with a valid token."
+}

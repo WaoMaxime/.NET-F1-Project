@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using BusinessLayer;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UI.DTO;
 
@@ -47,6 +48,7 @@ public class TyreApiController : Controller
     }
 
     [HttpPost("AddTyreToCar")]
+    [AllowAnonymous]
     public IActionResult AddTyreToCar([FromBody] CarTyreDto newCarTyreDto)
     {
         try

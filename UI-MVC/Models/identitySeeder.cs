@@ -8,22 +8,26 @@ public class IdentitySeeder
 {
 
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly F1CarDbContext _context;
 
-    public IdentitySeeder(UserManager<IdentityUser> userManager, F1CarDbContext context)
+    public IdentitySeeder(UserManager<IdentityUser> userManager, F1CarDbContext context, RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
         _context = context;
+        _roleManager = roleManager;
     }
 
     public async Task SeedAsync()
     {
         //Admin role and User role
-        /*var adminRole = new IdentityRole("Admin");
-        await _roleManager.CreateAsync(adminRole);*/
+        var adminRole = new IdentityRole("Admin");
+        await _roleManager.CreateAsync(adminRole);
+        var userRole = new IdentityRole("User");
+        await _roleManager.CreateAsync(userRole);
         
             
-        /*//New admin User
+        //New admin User
         var admin = new IdentityUser
         { 
             UserName = "admin",
@@ -32,7 +36,7 @@ public class IdentitySeeder
         };
 
         await _userManager.CreateAsync(admin, "Admin123!");
-        await _userManager.AddToRoleAsync(admin, "Admin");*/
+        await _userManager.AddToRoleAsync(admin, "Admin");
             
         //New normal User
         var users = new List<IdentityUser>();
@@ -62,6 +66,7 @@ public class IdentitySeeder
             car.User = users[count];
             count++;
         }
+        await _userManager.AddToRoleAsync(users[0], "User");
         await _context.SaveChangesAsync();
     }
 }

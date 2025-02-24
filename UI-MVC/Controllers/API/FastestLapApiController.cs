@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BusinessLayer;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -21,6 +22,7 @@ public class FastestLapApiController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public IActionResult Create([FromBody] FastestLap newLap)
     {
         _manager.AddFastestLap(
