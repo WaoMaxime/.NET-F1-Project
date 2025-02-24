@@ -8,9 +8,9 @@ POST http://localhost:5074/api/TyreApi/AddTyreToCar HTTP/1.1
 Content-Type: application/json
 
 {
-  "carId": 1,
+  "carId": 4,
   "tyre": "Soft",
-  "tyrePressure": 21.5,
-  "operationalTemperature": 85.0
+  "tyrePressure": 21,
+  "operationalTemperature": 85
 }
 
