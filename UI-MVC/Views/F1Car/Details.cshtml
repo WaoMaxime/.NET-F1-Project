@@ -19,7 +19,7 @@
         var isOwner = Model.UserId == currentUserId;
     }
 
-    @if (Model.EnginePower != null && isOwner && SignInManager.IsSignedIn(User))
+    @if ((Model.EnginePower != null && isOwner && SignInManager.IsSignedIn(User)) || User.IsInRole("Admin"))
     {
     <tr>
         <td>Horsepower (HP)</td>

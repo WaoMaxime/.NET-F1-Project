@@ -1,17 +1,34 @@
 ﻿# @no-redirect
 # @no-cookie-jar
-POST http://localhost:5074/api/FastestLapApi
+POST http://localhost:5074/api/TyreApi/AddTyreToCar
+Accept: application/json
 Content-Type: application/json
-Cookie: .AspNetCore.Identity.Application=CfDJ8MZ--MWX5KpPlOsqQRVzADwrSn7qAUPonTqYkCxcWV5Nc2F9811X4oFms_bFHfVLMFhHRi-pGrZpWIoeNnUaNK6DrpDtebHbPOu3liP0IFmQ8u_6o_0aZflsszOVTtoU3SE-fClysYiJRS8GoRvJuXX9Lap7W60uzPxq8coR6KPRc3D1gwLiw7AZQff-E454qeAOnxti9Hw2eGHqGxEPzPLFy-aWXD3KteDtf-igNPLItWaGpCLjTKLXPA90Niq5dxMY_dNPFhA2IbuVpnjZB80UMUckI6IuKlmjfRn5UYh_RrYO07dHoEjvYpPf5aq7SWo9eyrAm9VVIHLT9yh1t4wh4C4QPpbLf46hnep7_vtqxED81hF6mLuLddpULOmyhtNa-IPpEjaUDw1pOKBMz-zERkc6S6K9mRk8CdF_--jpEr6PnXYRiOVLpw7NhwndkrY_PHxn6y23FW_ai3skf5DAPW0pYaESK_UPlF5mp7cLhvCCspVS5Dywm51JVTLEf1wiG3xG2jyw2p-V6SWpkSvNu2kfxcd3DKmRxQ3WnkX7rM7gx8Qk1wQaaDzIzrJ2Z0YA_sXNfYXrfSKwlnOO6Qo3nsMswraJ5N4UOGzZOVoKyO6qvpTFo2xd-jMTTgukl5AD5qOv_Hr2s2z6gaEqKF4aKTL2TnasAR4eWY13Fv-mw50a7mh9gPhlJBjJgZ4bOkipWcadXYrfx3LQN2PBGEnDTzsM0LnlPuf8wB5ygD_hNTa22HQqH11tKNTsOcbgFF807JUoQbDfNJp6rNJY3Y_bAOkM_564c4QZC_qE7V-of8-M4GqAVlqRnIXrSYnmNQ
-Cookie: .AspNetCore.Antiforgery.xPQZ6ly-kNk=CfDJ8MZ--MWX5KpPlOsqQRVzADz1_dt-1Arfz2nI3GV6TRrdA1Vivcd0xLSrHzWynhF2EbnuQWgGP1B0gjrzJvvVvjuykdYHD9zjpFS8a17Ssoioe_4_QWbWcfWW6x9wCYsQ0BAqCo-_1FY4GVu53LCBOzY
 
 {
-  "Circuit": "Lemans",
-  "AirTemperature": 80,
-  "TrackTemperature": 80,
-  "LapTime": "00:01:19",
-  "DateOfRecord": "2023-07-09",
-  "Car": "2",
-  "Race" : "2"
+  "CarId": 4,
+  "Tyre": "Soft",
+  "TyrePressure": 40,
+  "OperationalTemperature": 120
 }
 ###
+
+
+# @no-redirect
+# @no-cookie-jar
+POST http://localhost:5074/api/TyreApi/AddTyreToCar
+Accept: application/json
+Content-Type: application/json
+Cookie: .AspNetCore.Identity.Application=CfDJ8Oq_I2pcZ-FMjnYECwRapLv-pbmbi6YoQosG1pJjqjVS2UftJ1R3Dx_8EXi7GyZ_SVcRD5qhe-RuA6fZAyUSUIUEuOi58AIr3C1Cbw9OGjZFXHj7bSIKhYQfxVhlck59xkKoB_V26aKtPJvhDHEDfeELGM2ix0_5yf-rTrSD2jiG8b86KFxMRgKMcJP_dPW0t3bMFcpfF88K7XVpjbc5jGRCqVbjG8R1qgR8azoFQbqbTEXEQakXZ29eFeG8E5Rw9MFXbILXIyl-hho23wgmTqewOGDoHLqqBmIp9qkd4BpABjj7MYUFUdYqr6pSj2Cnzb7qpqULOhE4s9JN5mvvgm91bDIC56kTU4sMjXnDD6xJubOjLtoMsuxtCuQD6O-fmTl3KPzBm3urQG5VyM7p-EN9Zi_oewb-tEzOuTuDUVbYLEOG9DiNKaH_58EhU3g8d5-K6dNA2qh6e_uXOmfIYf27PZnpj_zaQxrqEtuiHATiDTXQPZOPMWWFEXwjolFSGABvpYSxxcL9OvMIMMOctYfg8vRZIdyDMGG7Ew8gHe56KZK0SWZfhmcqxuhhAly_us7v19GFt2qJMmG8uNm8wjzdKc5Zp4c52sLOFBBjVUzWbRM9-A2dlP_4uFOajXW5gUW4WGfPb35S60ZMDP1nE3DtN089jh2enAlMAGNQCwzHH3uMhgMDK1SIlf8fXxlqSdPJvkpA9LUm6-JPjY-ZHHCl6eSrD1_G4twD2p5AUNpV59FpsVQwWoSpF2M8P24KQT6rWILQH3NI3BStjeLAFjg-MGlRjzgfrpm7BfwrBQTEd0ACb_lbalPu0L8ZXbXUhvpte_NzGUyDlrycinkTapkCookie: .AspNetCore.Antiforgery.xPQZ6ly-kNk=CfDJ8Oq_I2pcZ-FMjnYECwRapLuLxEWrNme1-IsTkpbEdF6yDZq1uvmNilFTL3LMte8Oa4n2rohlKcTZLv5UcYDD_Bp5E46snUtAwcq7qmoKm0QlIGvUAX6El8jrsIRhglFQZTDlpdCD9pBnTyk0YKCBzJk
+Cookie: .AspNetCore.Antiforgery.xPQZ6ly-kNk=CfDJ8Oq_I2pcZ-FMjnYECwRapLuLxEWrNme1-IsTkpbEdF6yDZq1uvmNilFTL3LMte8Oa4n2rohlKcTZLv5UcYDD_Bp5E46snUtAwcq7qmoKm0QlIGvUAX6El8jrsIRhglFQZTDlpdCD9pBnTyk0YKCBzJk
+
+{
+  "CarId": 1,
+  "Tyre": "Soft",
+  "TyrePressure": 40,
+  "OperationalTemperature": 120
+}
+###
+
+
+
+

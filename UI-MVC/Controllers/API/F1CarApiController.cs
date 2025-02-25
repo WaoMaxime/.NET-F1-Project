@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.EF;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UI.DTO;
@@ -19,7 +20,8 @@ public class F1CarApiController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateF1CarHp(int id, [FromBody] UpdateF1CarHpDto car)
+    [Authorize]
+    public async Task<IActionResult> UpdateF1CarHp(int id, /*[FromBody]*/ UpdateF1CarHpDto car)
     {
         var f1Car = await _context.F1Cars.FindAsync(id);
         if (f1Car == null)
@@ -29,7 +31,7 @@ public class F1CarApiController : ControllerBase
         if (user == null)
             return Unauthorized();
 
-        if (f1Car.UserId != user.Id)
+        if (user.Id != f1Car.UserId && !User.IsInRole("Admin"))
             return Forbid();
 
         f1Car.EnginePower = car.F1CarHp;

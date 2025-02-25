@@ -4,7 +4,7 @@ using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UI.DTO;
-
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class TyreApiController : Controller
@@ -48,8 +48,8 @@ public class TyreApiController : Controller
     }
 
     [HttpPost("AddTyreToCar")]
-    [AllowAnonymous]
-    public IActionResult AddTyreToCar([FromBody] CarTyreDto newCarTyreDto)
+    [Authorize]
+    public IActionResult AddTyreToCar(/*[FromBody]*/ CarTyreDto newCarTyreDto)
     {
         try
         {

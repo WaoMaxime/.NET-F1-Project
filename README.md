@@ -112,6 +112,67 @@ Location: /api/FastestLapApi/1
 }
 ```
 
+## Sprint 7
 
+#### Gebruikers
+```
+admin - Admin123! - Admin
+gebruiker1 - Gebruiker_1234 - User
+gebruiker2 - Gebruiker_1234 - None
+gebruiker3 - Gebruiker_1234 - None
+gebruiker4 - Gebruiker_1234 - None
+gebruiker5 - Gebruiker_1234 - None
+```
+#### Request 1
 
+```
+# @no-redirect
+# @no-cookie-jar
+POST http://localhost:5074/api/TyreApi/AddTyreToCar
+Accept: application/json
+Content-Type: application/json
 
+{
+"CarId": 4,
+"Tyre": "Soft",
+"TyrePressure": 40,
+"OperationalTemperature": 120
+}
+```
+#### Response 1
+
+```
+HTTP/1.1 401 Unauthorized
+```
+#### Request 2
+
+```
+# @no-redirect
+# @no-cookie-jar
+POST http://localhost:5074/api/TyreApi/AddTyreToCar
+Accept: application/json
+Content-Type: application/json
+Cookie: .AspNetCore.Identity.Application=CfDJ8Oq_I2pcZ-FMjnYECwRapLv-pbmbi6YoQosG1pJjqjVS2UftJ1R3Dx_8EXi7GyZ_SVcRD5qhe-RuA6fZAyUSUIUEuOi58AIr3C1Cbw9OGjZFXHj7bSIKhYQfxVhlck59xkKoB_V26aKtPJvhDHEDfeELGM2ix0_5yf-rTrSD2jiG8b86KFxMRgKMcJP_dPW0t3bMFcpfF88K7XVpjbc5jGRCqVbjG8R1qgR8azoFQbqbTEXEQakXZ29eFeG8E5Rw9MFXbILXIyl-hho23wgmTqewOGDoHLqqBmIp9qkd4BpABjj7MYUFUdYqr6pSj2Cnzb7qpqULOhE4s9JN5mvvgm91bDIC56kTU4sMjXnDD6xJubOjLtoMsuxtCuQD6O-fmTl3KPzBm3urQG5VyM7p-EN9Zi_oewb-tEzOuTuDUVbYLEOG9DiNKaH_58EhU3g8d5-K6dNA2qh6e_uXOmfIYf27PZnpj_zaQxrqEtuiHATiDTXQPZOPMWWFEXwjolFSGABvpYSxxcL9OvMIMMOctYfg8vRZIdyDMGG7Ew8gHe56KZK0SWZfhmcqxuhhAly_us7v19GFt2qJMmG8uNm8wjzdKc5Zp4c52sLOFBBjVUzWbRM9-A2dlP_4uFOajXW5gUW4WGfPb35S60ZMDP1nE3DtN089jh2enAlMAGNQCwzHH3uMhgMDK1SIlf8fXxlqSdPJvkpA9LUm6-JPjY-ZHHCl6eSrD1_G4twD2p5AUNpV59FpsVQwWoSpF2M8P24KQT6rWILQH3NI3BStjeLAFjg-MGlRjzgfrpm7BfwrBQTEd0ACb_lbalPu0L8ZXbXUhvpte_NzGUyDlrycinkTapkCookie: .AspNetCore.Antiforgery.xPQZ6ly-kNk=CfDJ8Oq_I2pcZ-FMjnYECwRapLuLxEWrNme1-IsTkpbEdF6yDZq1uvmNilFTL3LMte8Oa4n2rohlKcTZLv5UcYDD_Bp5E46snUtAwcq7qmoKm0QlIGvUAX6El8jrsIRhglFQZTDlpdCD9pBnTyk0YKCBzJk
+Cookie: .AspNetCore.Antiforgery.xPQZ6ly-kNk=CfDJ8Oq_I2pcZ-FMjnYECwRapLuLxEWrNme1-IsTkpbEdF6yDZq1uvmNilFTL3LMte8Oa4n2rohlKcTZLv5UcYDD_Bp5E46snUtAwcq7qmoKm0QlIGvUAX6El8jrsIRhglFQZTDlpdCD9pBnTyk0YKCBzJk
+
+{
+  "CarId": 1,
+  "Tyre": "Soft",
+  "TyrePressure": 40,
+  "OperationalTemperature": 120
+}
+```
+#### Response 2
+
+```
+HTTP/1.1 201 Created
+Content-Type: application/json
+Location: /api/TyreApi/AddTyreToCar
+
+{
+  "CarId": 1,
+  "Tyre": "Soft",
+  "TyrePressure": 40,
+  "OperationalTemperature": 120
+}
+```

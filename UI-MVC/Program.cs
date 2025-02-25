@@ -35,16 +35,48 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); 
     });
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized; // 🔹 Return 401 instead of redirecting
+        return Task.CompletedTask;
+    };
+
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status403Forbidden; // 🔹 Return 403 instead of redirecting
+        return Task.CompletedTask;
+    };
+});
 
 
 // KdG Live Monitoring
 builder.Services.AddLiveMonitoring();
 
-//Authenticatie
-builder.Services.AddAuthentication()
-    .AddCookie();
-//Authorizatie
-builder.Services.AddAuthorization();
+builder.Services.ConfigureApplicationCookie(cfg =>
+{
+    cfg.Events.OnRedirectToLogin += ctx =>
+    {
+        if (ctx.Request.Path.StartsWithSegments("/api"))
+        {
+            ctx.Response.StatusCode = 401;
+        }
+
+        return Task.CompletedTask;
+    };
+
+    cfg.Events.OnRedirectToAccessDenied += ctx =>
+    {
+        if (ctx.Request.Path.StartsWithSegments("/api"))
+        {
+            ctx.Response.StatusCode = 403;
+        }
+
+        return Task.CompletedTask;
+    };
+});
+
 //ASP.NET Identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<F1CarDbContext>(); // Ensure this exists
@@ -84,7 +116,6 @@ app.UseRouting();
 app.MapRazorPages(); //fundemental
 app.UseAndMapLiveMonitoring();
 app.UseStaticFiles();
-app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
