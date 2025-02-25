@@ -14,14 +14,12 @@ public class F1CarController : Controller
     
     private readonly IManager _manager;
     private readonly UserManager<IdentityUser> _userManager;
-    private readonly F1CarDbContext _context;
     
     
-    public F1CarController(IManager manager, UserManager<IdentityUser> userManager, F1CarDbContext context)
+    public F1CarController(IManager manager, UserManager<IdentityUser> userManager)
     {
         _manager = manager;
         _userManager = userManager;
-        _context = context;
     }
 
     public IActionResult Index()

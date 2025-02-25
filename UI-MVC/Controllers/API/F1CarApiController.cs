@@ -1,4 +1,4 @@
-﻿using DataAccessLayer.EF;
+﻿using BusinessLayer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,20 +10,20 @@ namespace UI_MVC.Controllers.API;
 [Route("api/F1Cars")]
 public class F1CarApiController : ControllerBase
 {
-    private readonly F1CarDbContext _context;
+    private readonly Manager _manager;
     private readonly UserManager<IdentityUser> _userManager;
 
-    public F1CarApiController(F1CarDbContext context, UserManager<IdentityUser> userManager)
+    public F1CarApiController(UserManager<IdentityUser> userManager, Manager manager)
     {
-        _context = context;
         _userManager = userManager;
+        _manager = manager;
     }
 
     [HttpPut("{id}")]
     [Authorize]
     public async Task<IActionResult> UpdateF1CarHp(int id, /*[FromBody]*/ UpdateF1CarHpDto car)
     {
-        var f1Car = await _context.F1Cars.FindAsync(id);
+        var f1Car = _manager.ChangeHpF1Car(id, car.F1CarHp);
         if (f1Car == null)
             return NotFound("Car not found.");
 
@@ -33,9 +33,6 @@ public class F1CarApiController : ControllerBase
 
         if (user.Id != f1Car.UserId && !User.IsInRole("Admin"))
             return Forbid();
-
-        f1Car.EnginePower = car.F1CarHp;
-        await _context.SaveChangesAsync();
 
         return Ok(new { message = "Horsepower updated successfully", updatedHp = car.F1CarHp });
     }

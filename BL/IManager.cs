@@ -18,6 +18,7 @@ namespace BusinessLayer
         void AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, IdentityUser user, double? enginePower = null);
         void AddRace(Race race);
         void RemoveTyreFromCar(int carId, TyreType tyreType);
+        F1Car ChangeHpF1Car(int carId, double newHp);
         CarTyre AddTyreToCar(int carId, TyreType tyreType, int tyrePressure, int operationalTemperature);
         FastestLap AddFastestLap(string circuit, int airTemperature, int trackTemperature, TimeSpan lapTime, DateTime dateOfRecord, F1Car car, Race race);
         F1Car GetF1Car(int id);

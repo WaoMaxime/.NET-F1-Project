@@ -111,6 +111,13 @@ public class Repository : IRepository
         _context.CarTyres.Remove(carTyre);
         _context.SaveChanges();
     }
+
+    public F1Car UpdateHpF1Car(F1Car car)
+    {
+        _context.Update(car);
+        _context.SaveChanges();
+        return car;
+    }
     
     public void CreateFastestLap(FastestLap lap)
     {

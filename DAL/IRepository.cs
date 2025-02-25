@@ -6,6 +6,7 @@ public interface IRepository
 {
     F1Car ReadF1Car(int id);
     F1Car ReadF1CarWithDetails(int id);
+    F1Car UpdateHpF1Car(F1Car car);
     CarTyre ReadTyreById(int id);
     Race ReadRace(int id);
     IEnumerable<FastestLap> ReadFastestLapsByTime(TimeSpan lapTime);

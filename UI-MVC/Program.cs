@@ -15,6 +15,7 @@ builder.Services.AddDbContext<F1CarDbContext>(options =>
     options.UseSqlite("Data Source=f1cars.db"));
 builder.Services.AddScoped<IRepository, Repository>();
 builder.Services.AddScoped<IManager, Manager>();
+builder.Services.AddScoped<Manager>();
 builder.Services.AddControllersWithViews()
     //.AddXmlSerializerFormatters();
     .AddXmlDataContractSerializerFormatters()

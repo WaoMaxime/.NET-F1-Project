@@ -59,6 +59,16 @@ public class InMemoryRepository : IRepository
         
     public F1Car ReadF1Car(int id) => F1Cars.FirstOrDefault(car => car.Id == id);
     public F1Car ReadF1CarWithDetails(int id) => F1Cars.FirstOrDefault(car => car.Id == id);
+    public F1Car UpdateHpF1Car(F1Car car)
+    {
+        var existingCar = F1Cars.FirstOrDefault(c => c.Id == car.Id);
+        if (existingCar != null)
+        {
+            existingCar.EnginePower = car.EnginePower; 
+        }
+        return existingCar;
+    }
+
     public Race ReadRace(int id) => Races.FirstOrDefault(race => race.Id == id);
         
     public IEnumerable<FastestLap> ReadFastestLapsByTime(TimeSpan lapTime) => FastestLaps.Where(lap => lap.LapTime == lapTime);

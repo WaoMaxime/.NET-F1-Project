@@ -82,6 +82,14 @@ public class Manager : IManager
     {
         _repository.RemoveCarTyre(carId, tyreType);
     }
+
+    public F1Car ChangeHpF1Car(int carId, double newHp)
+    {
+        var car = _repository.ReadF1Car(carId);
+        car.EnginePower = newHp;
+        ValidateModel(car);
+        return _repository.UpdateHpF1Car(car);
+    }
         
     public FastestLap AddFastestLap(
         string circuit,
