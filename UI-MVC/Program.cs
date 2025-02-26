@@ -109,6 +109,7 @@ app.UseRouting();
 app.MapRazorPages(); //fundemental
 app.UseAndMapLiveMonitoring();
 app.UseStaticFiles();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",

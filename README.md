@@ -142,7 +142,25 @@ Content-Type: application/json
 #### Response 1
 
 ```
+POST http://localhost:5074/api/TyreApi/AddTyreToCar
+
 HTTP/1.1 401 Unauthorized
+Content-Type: application/problem+json; charset=utf-8
+Date: Wed, 26 Feb 2025 15:08:15 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+{
+  "$id": "1",
+  "type": "https://tools.ietf.org/html/rfc9110#section-15.5.2",
+  "title": "Unauthorized",
+  "status": 401,
+  "traceId": "00-c0d8bd2bec6a9d8d4aea1d1769c838ae-fcd642c9b67c664a-01"
+}
+Response file saved.
+> 2025-02-26T160815.401.json
+
+Response code: 401 (Unauthorized); Time: 56ms (56 ms); Content length: 175 bytes (175 B)
 ```
 #### Request 2
 

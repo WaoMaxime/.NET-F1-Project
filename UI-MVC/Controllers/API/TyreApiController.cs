@@ -2,7 +2,9 @@
 using BusinessLayer;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
 using UI.DTO;
 
 [Route("api/[controller]")]
@@ -10,10 +12,12 @@ using UI.DTO;
 public class TyreApiController : Controller
 {
     private readonly IManager _manager;
+    private readonly UserManager<IdentityUser> _userManager;
 
-    public TyreApiController(IManager manager)
+    public TyreApiController(IManager manager, UserManager<IdentityUser> userManager)
     {
         _manager = manager;
+        _userManager = userManager;
     }
 
     [HttpGet("GetTyresForCar/{carId}")]
@@ -48,11 +52,14 @@ public class TyreApiController : Controller
     }
 
     [HttpPost("AddTyreToCar")]
-    [Authorize]
     public IActionResult AddTyreToCar(/*[FromBody]*/ CarTyreDto newCarTyreDto)
     {
         try
         {
+            if (User.Identity != null && !User.Identity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
             var createdCarTyre = _manager.AddTyreToCar(
                 newCarTyreDto.CarId,
                 newCarTyreDto.Tyre,
