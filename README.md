@@ -166,13 +166,21 @@ Cookie: .AspNetCore.Antiforgery.xPQZ6ly-kNk=CfDJ8Oq_I2pcZ-FMjnYECwRapLuLxEWrNme1
 
 ```
 HTTP/1.1 201 Created
-Content-Type: application/json
-Location: /api/TyreApi/AddTyreToCar
+Content-Type: application/json; charset=utf-8
+Date: Wed, 26 Feb 2025 14:44:25 GMT
+Server: Kestrel
+Location: http://localhost:5074/api/TyreApi/GetTyresForCar/4
+Transfer-Encoding: chunked
 
 {
-  "CarId": 1,
-  "Tyre": "Soft",
-  "TyrePressure": 40,
-  "OperationalTemperature": 120
+  "$id": "1",
+  "carId": 4,
+  "tyre": "Soft",
+  "tyrePressure": 40,
+  "operationalTemperature": 120
 }
+Response file saved.
+> 2025-02-26T154425.201.json
+
+Response code: 201 (Created); Time: 183ms (183 ms); Content length: 82 bytes (82 B)
 ```

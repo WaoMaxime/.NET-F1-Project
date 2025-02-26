@@ -1,5 +1,4 @@
-﻿using DataAccessLayer.EF;
-using Domain;
+﻿using BusinessLayer;
 using Microsoft.AspNetCore.Identity;
 
 namespace UI;
@@ -9,13 +8,13 @@ public class IdentitySeeder
 
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly F1CarDbContext _context;
+    private readonly Manager _manager;
 
-    public IdentitySeeder(UserManager<IdentityUser> userManager, F1CarDbContext context, RoleManager<IdentityRole> roleManager)
+    public IdentitySeeder(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, Manager manager)
     {
         _userManager = userManager;
-        _context = context;
         _roleManager = roleManager;
+        _manager = manager;
     }
 
     public async Task SeedAsync()
@@ -32,7 +31,7 @@ public class IdentitySeeder
         { 
             UserName = "admin",
             Email = "Admin@gmail.com",
-            EmailConfirmed = true
+            EmailConfirmed = true 
         };
 
         await _userManager.CreateAsync(admin, "Admin123!");
@@ -40,7 +39,7 @@ public class IdentitySeeder
             
         //New normal User
         var users = new List<IdentityUser>();
-        for (int i = 1; i <= 5; i++)
+        for (var i = 1; i <= 5; i++)
         {
             users.Add(new IdentityUser
             {
@@ -50,7 +49,7 @@ public class IdentitySeeder
             });
         }
 
-        foreach (IdentityUser user in users)
+        foreach (var user in users)
         {
             var result = await _userManager.CreateAsync(user, "Gebruiker_1234");
             if (!result.Succeeded)
@@ -61,12 +60,11 @@ public class IdentitySeeder
         //link users to existing domain data
 
         int count = 0;
-        foreach (F1Car car in _context.F1Cars)
+        foreach (var car in _manager.GetAllF1Cars())
         {
             car.User = users[count];
             count++;
         }
         await _userManager.AddToRoleAsync(users[0], "User");
-        await _context.SaveChangesAsync();
     }
 }
