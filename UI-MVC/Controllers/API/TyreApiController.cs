@@ -56,7 +56,7 @@ public class TyreApiController : Controller
     {
         try
         {
-            if (User.Identity != null && !User.Identity.IsAuthenticated)
+            if (User.Identity is { IsAuthenticated: false })
             {
                 return Unauthorized();
             }
