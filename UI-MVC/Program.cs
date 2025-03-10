@@ -3,6 +3,7 @@ using AspNetCoreLiveMonitoring.Extensions;
 using BusinessLayer;
 using DataAccessLayer;
 using DataAccessLayer.EF;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,22 +28,6 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); 
     });
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.Events.OnRedirectToLogin = context =>
-    {
-        context.Response.StatusCode = StatusCodes.Status401Unauthorized; // 🔹 Return 401 instead of redirecting
-        return Task.CompletedTask;
-    };
-
-    options.Events.OnRedirectToAccessDenied = context =>
-    {
-        context.Response.StatusCode = StatusCodes.Status403Forbidden; // 🔹 Return 403 instead of redirecting
-        return Task.CompletedTask;
-    };
-});
-
-
 // KdG Live Monitoring
 builder.Services.AddLiveMonitoring();
 
@@ -68,11 +53,21 @@ builder.Services.ConfigureApplicationCookie(cfg =>
         return Task.CompletedTask;
     };
 });
-
 //ASP.NET Identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<F1CarDbContext>(); // Ensure this exists
-
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.Cookie.Name = "Identity.Cookie";
+    options.Cookie.HttpOnly = true;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.LoginPath = "/Identity/Account/Login";
+    // ReturnUrlParameter requires 
+    //using Microsoft.AspNetCore.Authentication.Cookies;
+    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+    options.SlidingExpiration = true;
+});
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -103,7 +98,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-
 app.UseHttpsRedirection();
 app.UseRouting();
 app.MapRazorPages(); //fundemental
@@ -115,3 +109,4 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.Run();
+public partial class Program() {}

@@ -14,8 +14,8 @@ namespace BusinessLayer
         IEnumerable<F1Car> GetAllF1Cars();
         IEnumerable<Race> GetAllRaces();
         IEnumerable<CarTyre> GetCarTyresForCarById(int carId);
-        void AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, double? enginePower = null);
-        void AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, IdentityUser user, double? enginePower = null);
+        F1Car AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, double? enginePower = null);
+        F1Car AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, IdentityUser user, double? enginePower = null);
         void AddRace(Race race);
         void RemoveTyreFromCar(int carId, TyreType tyreType);
         F1Car ChangeHpF1Car(int carId, double newHp);

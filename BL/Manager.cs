@@ -59,18 +59,20 @@ public class Manager : IManager
         return newCarTyre;
     } 
         
-    public void AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, double? enginePower = null)
+    public F1Car AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, double? enginePower = null)
     {
         var newCar = new F1Car(team, chasis, constructorsPosition, driversPositions, manufactureDate, tyres, enginePower);
         ValidateModel(newCar);
         _repository.CreateF1Car(newCar);
+        return newCar;
     }
     
-    public void AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, IdentityUser user ,double? enginePower = null)
+    public F1Car AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, IdentityUser user ,double? enginePower = null)
     {
         var newCar = new F1Car(team, chasis, constructorsPosition, driversPositions, manufactureDate, tyres, user, enginePower);
         ValidateModel(newCar);
         _repository.CreateF1Car(newCar);
+        return newCar;
     }
         
     public void AddRace(Race race)

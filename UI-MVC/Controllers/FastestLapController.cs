@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+[Authorize]
 public class FastestLapController : Controller
 {
-    [Authorize]
-    public IActionResult Index()
+    public ViewResult Index()
     {
         return View();
     }

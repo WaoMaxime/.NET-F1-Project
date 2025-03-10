@@ -4,11 +4,12 @@ using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using UI_MVC.Controllers;
 using UI.DTO;
 
 namespace UI.Controllers;
 
-
+[Authorize]
 public class F1CarController : Controller
 {  
     
@@ -21,12 +22,13 @@ public class F1CarController : Controller
         _manager = manager;
         _userManager = userManager;
     }
-
+    [AllowAnonymous]
     public IActionResult Index()
     {
         var cars = _manager.GetAllF1CarsWithDetails();
         return View(cars);
     }
+    [AllowAnonymous]
 
     public async Task<IActionResult> Details(int id)
     {
@@ -43,14 +45,12 @@ public class F1CarController : Controller
     }
     
     [HttpGet]
-    [Authorize]
-    public IActionResult Add()
+    public ViewResult Add()
     {
         return View();
     }
 
     [HttpPost]
-    [Authorize]
     public async Task<IActionResult> Add(F1Car newCar)
     {
         if (!ModelState.IsValid)
