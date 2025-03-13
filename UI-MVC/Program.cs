@@ -31,6 +31,14 @@ builder.Services.AddControllers()
 // KdG Live Monitoring
 builder.Services.AddLiveMonitoring();
 
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    })
+    .AddCookie(); 
+
+
 builder.Services.ConfigureApplicationCookie(cfg =>
 {
     cfg.Events.OnRedirectToLogin += ctx =>

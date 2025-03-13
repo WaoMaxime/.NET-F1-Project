@@ -18,30 +18,26 @@ namespace Tests.IntegrationTests.Config;
 public class ExtendedWebApplicationFactoryWithMockAuth<TProgram>
     : WebApplicationFactory<TProgram> where TProgram : class
 {
-    // (*) use of in-memory sqlite database
-    public SqliteConnection SqliteInMemoryConnection { get; private set; }
-
-    // (**) use of mocked authenticated user
-    private MockClaimSeed mockClaimSeed = new MockClaimSeed(new Claim[] {});
-    
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        // (*) use of in-memory sqlite database
         builder.ConfigureServices(services =>
         {
-            var dbContextOptionsDescriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbContextOptions<F1CarDbContext>));
-            services.Remove(dbContextOptionsDescriptor);
+            var dbContextDescriptor = services.SingleOrDefault(
+                d => d.ServiceType ==
+                     typeof(DbContextOptions<F1CarDbContext>));
+
+            services.Remove(dbContextDescriptor);
 
             var dbConnectionDescriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbConnection));
+                d => d.ServiceType ==
+                     typeof(DbConnection));
+
             services.Remove(dbConnectionDescriptor);
 
             // Create open SqliteConnection so EF won't automatically close it.
             services.AddSingleton<DbConnection>(container =>
             {
-                SqliteInMemoryConnection = new SqliteConnection("DataSource=:memory:");
-                var connection = SqliteInMemoryConnection;
+                var connection = new SqliteConnection("DataSource=:memory:");
                 connection.Open();
 
                 return connection;
@@ -53,22 +49,20 @@ public class ExtendedWebApplicationFactoryWithMockAuth<TProgram>
                 options.UseSqlite(connection);
             });
         });
-        
-        builder.ConfigureTestServices(services =>
-        {
-            services.AddSingleton<IAuthenticationSchemeProvider, MockSchemeProvider>();
-            services.AddScoped<MockClaimSeed>(_ => mockClaimSeed);
-        });
-        
 
         builder.UseEnvironment("Development");
     }
     
-    public ExtendedWebApplicationFactoryWithMockAuth<TProgram> SetAuthenticatedUser(params Claim[] claimSeed)
+    public WebApplicationFactory<TProgram> AuthenticatedInstance(params Claim[] claimSeed)
     {
-        mockClaimSeed = new MockClaimSeed(claimSeed);
-        
-        return this;
+        return WithWebHostBuilder(builder =>
+        {
+            builder.ConfigureTestServices(services =>
+            {
+                services.AddSingleton<IAuthenticationSchemeProvider, MockSchemeProvider>();
+                services.AddSingleton<MockClaimSeed>(_ => new(claimSeed));
+            });
+        });
     }
 
     public class MockSchemeProvider : AuthenticationSchemeProvider
@@ -114,16 +108,13 @@ public class ExtendedWebApplicationFactoryWithMockAuth<TProgram>
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            if (!_claimSeed.GetSeeds().Any())
-                return Task.FromResult(AuthenticateResult.Fail("No authenticated user seeded for test!"));
-            
             var claimsIdentity = new ClaimsIdentity(_claimSeed.GetSeeds(), IdentityConstants.ApplicationScheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             var ticket = new AuthenticationTicket(claimsPrincipal, IdentityConstants.ApplicationScheme);
             return Task.FromResult(AuthenticateResult.Success(ticket));
         }
     }
-    
+
     public class MockClaimSeed
     {
         private readonly IEnumerable<Claim> _seed;

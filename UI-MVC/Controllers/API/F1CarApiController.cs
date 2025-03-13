@@ -20,20 +20,21 @@ public class F1CarApiController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize]
-    public async Task<IActionResult> UpdateF1CarHp(int id, /*[FromBody]*/ UpdateF1CarHpDto car)
+    public Task<IActionResult> UpdateF1CarHp(int id, /*[FromBody]*/ UpdateF1CarHpDto car)
     {
+        var presentCar = _manager.GetF1Car(id);
+        if (presentCar == null)
+        {
+            return Task.FromResult<IActionResult>(NotFound());
+        }
         var f1Car = _manager.ChangeHpF1Car(id, car.F1CarHp);
-        if (f1Car == null)
-            return NotFound("Car not found.");
-
-        var user = await _userManager.GetUserAsync(User);
+        var user = _userManager.GetUserId(User);
         if (user == null)
-            return Unauthorized();
+            return Task.FromResult<IActionResult>(Unauthorized());
 
-        if (user.Id != f1Car.UserId && !User.IsInRole("Admin"))
-            return Forbid();
+        if (user != f1Car.UserId && !User.IsInRole("Admin"))
+            return Task.FromResult<IActionResult>(Forbid());
 
-        return Ok(new { message = "Horsepower updated successfully", updatedHp = car.F1CarHp });
+        return Task.FromResult<IActionResult>(Ok(new { message = "Horsepower updated successfully", updatedHp = car.F1CarHp }));
     }
 }

@@ -37,7 +37,6 @@ public class F1CarController : Controller
         {
             return NotFound();
         }
-        
         var maintainerUser = car.UserId != null ? await _userManager.FindByIdAsync(car.UserId) : null;
         
         ViewData["MaintainerUsername"] = maintainerUser?.UserName ?? "Unknown";
