@@ -1,39 +1,52 @@
-image: gradle:7.4.2-jdk11  # Gradle + Java 11
+image: maven:3.8.6-openjdk-11  # Use a Maven Docker image with Java 11
 
 stages:
   - build
   - test
 
 cache:
+  key: maven-cache
   paths:
-    - .gradle/wrapper/
-    - .gradle/caches/
+    - .m2/repository  # Cache Maven dependencies for faster builds
+
+before_script:
+  - echo "Using Maven without wrapper"
+  - mvn --version  # Verify Maven version
 
 build:
   stage: build
   script:
-    - gradle build
+    - mvn clean package  # Build the application
   artifacts:
     paths:
-      - build/libs/*.jar
+      - target/*.jar  # Store the built JAR file as an artifact
     expire_in: 1 hour
 
 unit_tests:
   stage: test
   script:
-    - gradle test
+    - mvn test  # Run unit tests
   artifacts:
     reports:
-      junit: build/test-results/test/*.xml  # Testresultaten tonen in GitLab UI
+      junit: target/surefire-reports/*.xml  # JUnit test reports for GitLab
+    expire_in: 1 day
+
+integration_tests:
+  stage: test
+  script:
+    - mvn verify  # Run integration tests
+  artifacts:
+    reports:
+      junit: target/failsafe-reports/*.xml  # Integration test reports
     expire_in: 1 day
 
 coverage_report:
   stage: test
   script:
-    - gradle jacocoTestReport
+    - mvn jacoco:report  # Generate the code coverage report
     - mkdir -p coverage
-    - cp -r build/reports/jacoco/test/html/* coverage/
+    - cp -r target/site/jacoco/* coverage/  # Copy HTML coverage files
   artifacts:
     paths:
-      - coverage/
+      - coverage/  # Store the code coverage as an artifact
     expire_in: 1 week
