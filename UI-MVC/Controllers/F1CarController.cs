@@ -21,7 +21,7 @@ public class F1CarController : Controller
         _manager = manager;
     }
     [AllowAnonymous]
-    public IActionResult Index()
+    public IActionResult Index()    
     {
         var cars = _manager.GetAllF1CarsWithDetails();
         return View(cars);
