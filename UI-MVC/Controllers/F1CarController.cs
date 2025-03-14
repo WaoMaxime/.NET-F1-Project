@@ -14,13 +14,11 @@ public class F1CarController : Controller
 {  
     
     private readonly IManager _manager;
-    private readonly UserManager<IdentityUser> _userManager;
     
     
-    public F1CarController(IManager manager, UserManager<IdentityUser> userManager)
+    public F1CarController(IManager manager)
     {
         _manager = manager;
-        _userManager = userManager;
     }
     [AllowAnonymous]
     public IActionResult Index()
@@ -28,38 +26,33 @@ public class F1CarController : Controller
         var cars = _manager.GetAllF1CarsWithDetails();
         return View(cars);
     }
-    [AllowAnonymous]
 
-    public async Task<IActionResult> Details(int id)
+    [AllowAnonymous]
+    public IActionResult Details(int id)
     {
         var car = _manager.GetF1CarWithDetails(id);
         if (car == null)
         {
             return NotFound();
         }
-        var maintainerUser = car.UserId != null ? await _userManager.FindByIdAsync(car.UserId) : null;
-        
-        ViewData["MaintainerUsername"] = maintainerUser?.UserName ?? "Unknown";
         return View(car);
     }
-    
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public ViewResult Add()
     {
         return View();
     }
-
+    
+    [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<IActionResult> Add(F1Car newCar)
+    public IActionResult Add(F1Car newCar)
     {
         if (!ModelState.IsValid)
         {
-            return View(newCar); 
+            return View(newCar);
         }
-        
-        newCar.User = await _userManager.GetUserAsync(User);
-        
-         _manager.AddF1Car(
+        _manager.AddF1Car(
             newCar.Team,
             newCar.Chasis,
             newCar.ConstructorsPosition,
@@ -68,6 +61,6 @@ public class F1CarController : Controller
             newCar.Tyres,
             newCar.User,
             newCar.EnginePower);
-        return RedirectToAction("Index");
+        return RedirectToAction("Details", new { Id = newCar.Id });
     }
 }

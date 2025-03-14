@@ -71,12 +71,11 @@ public class F1CarControllerTests : IClassFixture<ExtendedWebApplicationFactoryW
         }
         
         [Fact]
-        public async Task Add_ReturnsSuccessAndCorrectView_WhenUserIsAuthenticated()
+        public async Task Add_ReturnsSuccessAndCorrectView_WhenUserIsAdmin()
         {
             // Arrange
             var client = _factory.AuthenticatedInstance(
-                    new Claim(ClaimTypes.NameIdentifier, "2bdefdc4-0efd-4291-8dfc-969673acde15"),
-                    new Claim(ClaimTypes.Name, "admin"))
+                    new Claim(ClaimTypes.Role, "Admin"))
                 .CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
             // Act
