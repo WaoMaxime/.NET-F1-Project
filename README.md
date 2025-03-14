@@ -157,10 +157,6 @@ Transfer-Encoding: chunked
   "status": 401,
   "traceId": "00-c0d8bd2bec6a9d8d4aea1d1769c838ae-fcd642c9b67c664a-01"
 }
-Response file saved.
-> 2025-02-26T160815.401.json
-
-Response code: 401 (Unauthorized); Time: 56ms (56 ms); Content length: 175 bytes (175 B)
 ```
 #### Request 2
 
@@ -197,8 +193,8 @@ Transfer-Encoding: chunked
   "tyrePressure": 40,
   "operationalTemperature": 120
 }
-Response file saved.
-> 2025-02-26T154425.201.json
-
-Response code: 201 (Created); Time: 183ms (183 ms); Content length: 82 bytes (82 B)
+```
+## Sprint 8
+```shell
+dotnet test
 ```
