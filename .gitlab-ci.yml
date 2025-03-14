@@ -1,24 +1,39 @@
+image: gradle:7.4.2-jdk11  # Gradle + Java 11
+
 stages:
-  - setup
   - build
   - test
 
-setup:
-  stage: setup
-  script:
-    - apt-get update && apt-get install -y wget unzip
-    - wget https://dlcdn.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.zip
-    - unzip apache-maven-3.8.6-bin.zip
-    - mv apache-maven-3.8.6 /opt/maven
-    - echo "export PATH=/opt/maven/bin:$PATH" >> ~/.bashrc
-    - source ~/.bashrc
-    - mvn -version  # Controleer installatie
+cache:
+  paths:
+    - .gradle/wrapper/
+    - .gradle/caches/
 
 build:
   stage: build
   script:
-    - mvn clean package
+    - gradle build
   artifacts:
     paths:
-      - target/*.jar
+      - build/libs/*.jar
     expire_in: 1 hour
+
+unit_tests:
+  stage: test
+  script:
+    - gradle test
+  artifacts:
+    reports:
+      junit: build/test-results/test/*.xml  # Testresultaten tonen in GitLab UI
+    expire_in: 1 day
+
+coverage_report:
+  stage: test
+  script:
+    - gradle jacocoTestReport
+    - mkdir -p coverage
+    - cp -r build/reports/jacoco/test/html/* coverage/
+  artifacts:
+    paths:
+      - coverage/
+    expire_in: 1 week
