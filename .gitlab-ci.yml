@@ -1,0 +1,56 @@
+stages:
+  - build
+  - test
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache:
+  paths:
+    - .m2/repository
+
+before_script:
+  - export MAVEN_CLI_OPTS="--batch-mode --errors --fail-at-end --show-version"
+  - chmod +x mvnw || true
+
+build:
+  stage: build
+  script:
+    - echo "Building project..."
+    - ./mvnw $MAVEN_CLI_OPTS clean package
+  artifacts:
+    paths:
+      - target/*.jar
+    expire_in: 1 hour
+
+unit_tests:
+  stage: test
+  script:
+    - echo "Running unit tests..."
+    - ./mvnw $MAVEN_CLI_OPTS test
+  artifacts:
+    reports:
+      junit: target/surefire-reports/*.xml
+    expire_in: 1 day
+
+integration_tests:
+  stage: test
+  script:
+    - echo "Running integration tests..."
+    - ./mvnw $MAVEN_CLI_OPTS verify
+  artifacts:
+    reports:
+      junit: target/failsafe-reports/*.xml
+    expire_in: 1 day
+
+coverage_report:
+  stage: test
+  script:
+    - echo "Generating test coverage report..."
+    - ./mvnw $MAVEN_CLI_OPTS jacoco:report
+    - mkdir -p coverage
+    - cp -r target/site/jacoco/* coverage/
+  artifacts:
+    paths:
+      - coverage/
+    expire_in: 1 week
