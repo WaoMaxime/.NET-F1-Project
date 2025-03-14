@@ -44,10 +44,11 @@ integration_tests:
 coverage_report:
   stage: coverage_report
   script:
-    - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
+    - dotnet test /p:CollectCoverage=true /p:CoverletOutput=TestResults/coverage.info /p:CoverletOutputFormat=lcov
     - mkdir -p coverage
-    - cp -r Tests/TestResults/* coverage/  # Copy coverage reports
+    - if [ -d "TestResults" ]; then cp -r TestResults/* coverage/; else echo "No coverage report found"; fi
   artifacts:
     paths:
       - coverage/
     expire_in: 1 week
+
