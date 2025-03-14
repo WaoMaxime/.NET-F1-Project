@@ -43,10 +43,12 @@ integration_tests:
 coverage_report:
   stage: test
   script:
-    - mvn jacoco:report  # Generate the code coverage report
+    - mvn clean verify  # Run tests and collect coverage data
+    - mvn jacoco:report # Generate coverage report
     - mkdir -p coverage
-    - cp -r target/site/jacoco/* coverage/  # Copy HTML coverage files
+    - cp -r target/site/jacoco/* coverage/  # Copy HTML report
   artifacts:
     paths:
-      - coverage/  # Store the code coverage as an artifact
+      - coverage/
     expire_in: 1 week
+
