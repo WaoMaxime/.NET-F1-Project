@@ -1,54 +1,53 @@
-image: maven:3.8.6-openjdk-11  # Use a Maven Docker image with Java 11
+image: mcr.microsoft.com/dotnet/sdk:7.0  # Use the latest .NET SDK image
 
 stages:
   - build
   - test
+  - coverage_report
 
 cache:
-  key: maven-cache
+  key: dotnet-cache
   paths:
-    - .m2/repository  # Cache Maven dependencies for faster builds
+    - ~/.nuget/packages  # Cache NuGet dependencies for faster builds
 
 before_script:
-  - echo "Using Maven without wrapper"
-  - mvn --version  # Verify Maven version
+  - dotnet --version  # Verify .NET SDK version
 
 build:
   stage: build
   script:
-    - mvn clean package  # Build the application
+    - dotnet restore  # Restore dependencies
+    - dotnet build --configuration Release  # Build the project
   artifacts:
     paths:
-      - target/*.jar  # Store the built JAR file as an artifact
+      - "**/bin/Release/net7.0/"  # Store compiled binaries
     expire_in: 1 hour
 
 unit_tests:
   stage: test
   script:
-    - mvn test  # Run unit tests
+    - dotnet test Tests/Tests.csproj --logger "trx;LogFileName=test-results.trx" --results-directory ./TestResults/
   artifacts:
     reports:
-      junit: target/surefire-reports/*.xml  # JUnit test reports for GitLab
+      junit: ./TestResults/test-results.trx  # Store test results in GitLab
     expire_in: 1 day
 
 integration_tests:
   stage: test
   script:
-    - mvn verify  # Run integration tests
+    - dotnet test Tests/Tests.csproj --filter "Category=Integration" --logger "trx;LogFileName=integration-test-results.trx" --results-directory ./TestResults/
   artifacts:
     reports:
-      junit: target/failsafe-reports/*.xml  # Integration test reports
+      junit: ./TestResults/integration-test-results.trx  # Store integration test reports
     expire_in: 1 day
 
 coverage_report:
-  stage: test
+  stage: coverage_report
   script:
-    - mvn clean verify  # Run tests and collect coverage data
-    - mvn jacoco:report # Generate coverage report
+    - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
     - mkdir -p coverage
-    - cp -r target/site/jacoco/* coverage/  # Copy HTML report
+    - cp -r Tests/TestResults/* coverage/  # Copy coverage reports
   artifacts:
     paths:
       - coverage/
     expire_in: 1 week
-
