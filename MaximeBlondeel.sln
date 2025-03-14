@@ -14,8 +14,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI-MVC", "UI-MVC\UI-MVC.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{F6BEE08A-5E37-46BA-BC26-EAB2A2A94368}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maven", "Maven\Maven.csproj", "{26711B80-129E-486C-9F18-6680850161F2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,9 +46,5 @@ Global
 		{F6BEE08A-5E37-46BA-BC26-EAB2A2A94368}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6BEE08A-5E37-46BA-BC26-EAB2A2A94368}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6BEE08A-5E37-46BA-BC26-EAB2A2A94368}.Release|Any CPU.Build.0 = Release|Any CPU
-		{26711B80-129E-486C-9F18-6680850161F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{26711B80-129E-486C-9F18-6680850161F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{26711B80-129E-486C-9F18-6680850161F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{26711B80-129E-486C-9F18-6680850161F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
