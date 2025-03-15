@@ -198,3 +198,20 @@ Transfer-Encoding: chunked
 ```shell
 dotnet test
 ```
+![Code coverage](Coverage.png)
+```
+```
+#### FQN Authorization
+```
+Tests/IntegrationTests/F1CarControllerTests.cs
+```
+#### FQN Verification
+```
+Tests/UnitTests/F1CarManagerTests.cs
+```
+### Pipeline Test Resultaten
+
+[Bekijk het 'Tests' tabblad van een geslaagde pipeline](https://gitlab.com/kdg-ti/programmeren-2-dotnet/24-25/inf202/projects/maxime.blondeel/-/pipelines)
+
+### Code Coverage Rapport
+[Bekijk het code coverage rapport van een geslaagde pipeline](https://gitlab.com/kdg-ti/programmeren-2-dotnet/24-25/inf202/projects/maxime.blondeel/-/tree/main/Tests/coverage_report?ref_type=heads)
