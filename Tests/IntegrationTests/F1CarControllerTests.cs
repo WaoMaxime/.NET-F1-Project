@@ -20,27 +20,27 @@ public class F1CarControllerTests : IClassFixture<ExtendedWebApplicationFactoryW
         //Protection
     
         [Fact]
-        public async Task Details_ReturnsNotFound_WhenInvalidIdProvided()
+        public void Details_ReturnsNotFound_WhenInvalidIdProvided()
         {
             // Arrange
             var client = _factory.CreateClient(new WebApplicationFactoryClientOptions{AllowAutoRedirect = false});
             var invalidF1CarId = -1; 
 
             // Act
-            var response = await client.GetAsync($"/F1Car/Details/{invalidF1CarId}");
+            var response = client.GetAsync($"/F1Car/Details/{invalidF1CarId}").GetAwaiter().GetResult();
 
             // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
         
         [Fact]
-        public async Task Add_ThrowsUnauthorized_WhenUserIsNotAuthenticated()
+        public void Add_ThrowsUnauthorized_WhenUserIsNotAuthenticated()
         {
             // Arrange
             var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
             // Act
-            var response = await client.GetAsync($"/F1Car/Add");
+            var response = client.GetAsync($"/F1Car/Add").GetAwaiter().GetResult();
 
             // Assert
             Assert.True(response.StatusCode is HttpStatusCode.Found or HttpStatusCode.Unauthorized);
@@ -53,25 +53,25 @@ public class F1CarControllerTests : IClassFixture<ExtendedWebApplicationFactoryW
         
         //Successes
         [Fact]
-        public async Task Details_ReturnsSuccessAndCorrectView_WhenValidIdProvided()
+        public void Details_ReturnsSuccessAndCorrectView_WhenValidIdProvided()
         {
             // Arrange
             var client = _factory.CreateClient(new WebApplicationFactoryClientOptions{AllowAutoRedirect = false});
             var validF1CarId = 1; 
 
             // Act
-            var response = await client.GetAsync($"/F1Car/Details/{validF1CarId}");
+            var response = client.GetAsync($"/F1Car/Details/{validF1CarId}").GetAwaiter().GetResult();
 
             // Assert
             response.EnsureSuccessStatusCode(); 
 
-            var responseString = await response.Content.ReadAsStringAsync();
+            var responseString = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Contains("F1 Car Details", responseString); 
         }
         
         [Fact]
-        public async Task Add_ReturnsSuccessAndCorrectView_WhenUserIsAdmin()
+        public void Add_ReturnsSuccessAndCorrectView_WhenUserIsAdmin()
         {
             // Arrange
             var client = _factory.AuthenticatedInstance(
@@ -79,12 +79,12 @@ public class F1CarControllerTests : IClassFixture<ExtendedWebApplicationFactoryW
                 .CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
             // Act
-            var response = await client.GetAsync($"/F1Car/Add");
+            var response =  client.GetAsync($"/F1Car/Add").GetAwaiter().GetResult();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            var responseString = await response.Content.ReadAsStringAsync();
+            var responseString = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             Assert.Contains("<h1>Add New F1 Car</h1>", responseString); 
         }
         
@@ -92,7 +92,7 @@ public class F1CarControllerTests : IClassFixture<ExtendedWebApplicationFactoryW
     
         //Protection
         [Fact]
-        public async Task UpdateF1CarHp_ReturnsUnauthorized_WhenUserIsNotAuthenticated()
+        public void UpdateF1CarHp_ReturnsUnauthorized_WhenUserIsNotAuthenticated()
         {
             // Arrange
             var client = _factory.CreateClient(); 
@@ -101,14 +101,14 @@ public class F1CarControllerTests : IClassFixture<ExtendedWebApplicationFactoryW
             var updateDto = new UpdateF1CarHpDto { F1CarHp = 1100 };
 
             // Act
-            var response = await client.PutAsJsonAsync($"/api/F1Cars/{validF1CarId}", updateDto);
+            var response = client.PutAsJsonAsync($"/api/F1Cars/{validF1CarId}", updateDto).GetAwaiter().GetResult();
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
         [Fact]
-        public async Task UpdateF1CarHp_ReturnsUnauthorized_WhenUserIsNotOwnerOrAdmin()
+        public void UpdateF1CarHp_ReturnsUnauthorized_WhenUserIsNotOwnerOrAdmin()
         {
             // Arrange
             var client = _factory.AuthenticatedInstance(
@@ -119,14 +119,14 @@ public class F1CarControllerTests : IClassFixture<ExtendedWebApplicationFactoryW
             var updateDto = new UpdateF1CarHpDto { F1CarHp = 1100 };
 
             // Act
-            var response = await client.PutAsJsonAsync($"/api/F1Cars/{validF1CarId}", updateDto);
+            var response = client.PutAsJsonAsync($"/api/F1Cars/{validF1CarId}", updateDto).GetAwaiter().GetResult();
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
         [Fact]
-        public async Task UpdateF1CarHp_ReturnsNotFound_WhenF1CarDoesNotExist()
+        public void UpdateF1CarHp_ReturnsNotFound_WhenF1CarDoesNotExist()
         {
             // Arrange
             var client = _factory
@@ -136,14 +136,14 @@ public class F1CarControllerTests : IClassFixture<ExtendedWebApplicationFactoryW
             var updateDto = new UpdateF1CarHpDto { F1CarHp = 950 };
 
             // Act
-            var response = await client.PutAsJsonAsync($"/api/F1Cars/{invalidF1CarId}", updateDto);
+            var response = client.PutAsJsonAsync($"/api/F1Cars/{invalidF1CarId}", updateDto).GetAwaiter().GetResult();
 
             // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
         //Successes
         [Fact]
-        public async Task UpdateF1CarHp_ReturnsSuccess_WhenUserIsAdmin()
+        public void UpdateF1CarHp_ReturnsSuccess_WhenUserIsAdmin()
         {
             // Arrange
             var client = _factory.AuthenticatedInstance(new Claim(
@@ -155,10 +155,10 @@ public class F1CarControllerTests : IClassFixture<ExtendedWebApplicationFactoryW
             var updateDto = new UpdateF1CarHpDto { F1CarHp = 1200 };
 
             // Act
-            var response = await client.PutAsJsonAsync($"/api/F1Cars/{validF1CarId}", updateDto);
+            var response = client.PutAsJsonAsync($"/api/F1Cars/{validF1CarId}", updateDto).GetAwaiter().GetResult();
 
             // Debugging output
-            var responseContent = await response.Content.ReadAsStringAsync();
+            var responseContent = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             // Assert
             response.EnsureSuccessStatusCode(); 
