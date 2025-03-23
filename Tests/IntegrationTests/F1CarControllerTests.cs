@@ -86,6 +86,7 @@ public class F1CarControllerTests : IClassFixture<ExtendedWebApplicationFactoryW
 
             var responseString = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             Assert.Contains("<h1>Add New F1 Car</h1>", responseString); 
+            _factory.AuthenticatedInstance();
         }
         
         //API tests
@@ -123,6 +124,7 @@ public class F1CarControllerTests : IClassFixture<ExtendedWebApplicationFactoryW
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            _factory.AuthenticatedInstance();
         }
 
         [Fact]
@@ -163,6 +165,7 @@ public class F1CarControllerTests : IClassFixture<ExtendedWebApplicationFactoryW
             // Assert
             response.EnsureSuccessStatusCode(); 
             Assert.Contains("Horsepower updated successfully", responseContent);
+            _factory.AuthenticatedInstance();
         }
 
 }
