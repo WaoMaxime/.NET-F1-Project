@@ -1,4 +1,5 @@
-﻿using BusinessLayer;
+﻿using System.Security.Claims;
+using BusinessLayer;
 using DataAccessLayer.EF;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
@@ -14,12 +15,15 @@ public class F1CarController : Controller
 {  
     
     private readonly IManager _manager;
+    private readonly UserManager<IdentityUser> _userManager;
     
     
-    public F1CarController(IManager manager)
+    public F1CarController(IManager manager, UserManager<IdentityUser> userManager)
     {
         _manager = manager;
+        _userManager = userManager;
     }
+
     [AllowAnonymous]
     public IActionResult Index()    
     {
@@ -35,6 +39,9 @@ public class F1CarController : Controller
         {
             return NotFound();
         }
+        var user = _userManager.FindByIdAsync(car.UserId!);
+        var username = user.Result?.UserName;
+        ViewData["MaintainerUsername"] = username;
         return View(car);
     }
     [Authorize(Roles = "Admin")]

@@ -5,6 +5,9 @@ using Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.Identity.Client;
 using Moq;
 using Tests.IntegrationTests.Config;
 using UI.Controllers;
@@ -20,12 +23,12 @@ public class F1CarControllerTests
         int validF1CarId = 3;
 
         var f1MgrMock = new Mock<IManager>();
-        
+        var userMock = GetMockUserManager<IdentityUser>();        
         f1MgrMock.Setup(mgr => mgr.GetF1CarWithDetails(validF1CarId))
             .Returns(new F1Car() { Id = validF1CarId })
             .Verifiable();
 
-        var f1Controller = new F1CarController(f1MgrMock.Object);
+        var f1Controller = new F1CarController(f1MgrMock.Object, userMock.Object);
         
         var authorizedUser = new ClaimsPrincipal(new ClaimsIdentity([
             new Claim(ClaimTypes.Name, "AuthorizedUser"),
@@ -55,11 +58,13 @@ public class F1CarControllerTests
         int validF1CarId = -3;
     
         var f1MgrMock = new Mock<IManager>();
+        var userMock = GetMockUserManager<IdentityUser>();
+        
         f1MgrMock.Setup(mgr => mgr.GetF1CarWithDetails(validF1CarId))
             .Returns(new F1Car() { Id = validF1CarId })
             .Verifiable(); 
 
-        var f1Controller = new F1CarController(f1MgrMock.Object);
+        var f1Controller = new F1CarController(f1MgrMock.Object, userMock.Object);
         
         var authorizedUser = new ClaimsPrincipal(new ClaimsIdentity([
             new Claim(ClaimTypes.Name, "AuthorizedUser"),
@@ -85,6 +90,7 @@ public class F1CarControllerTests
     {
         // Arrange
         var managerMock = new Mock<IManager>();
+        var userMock = GetMockUserManager<IdentityUser>();
 
         var newCar = new F1Car
         {
@@ -99,7 +105,7 @@ public class F1CarControllerTests
             EnginePower = 1000 
         };
 
-        var controller = new F1CarController(managerMock.Object);
+        var controller = new F1CarController(managerMock.Object, userMock.Object);
         
         var adminUser = new ClaimsPrincipal(new ClaimsIdentity([
             new Claim(ClaimTypes.Role, "Admin")
@@ -135,6 +141,8 @@ public class F1CarControllerTests
     {
         // Arrange
         var managerMock = new Mock<IManager>();
+        var userMock = GetMockUserManager<IdentityUser>();
+
 
         var newCar = new F1Car
         {
@@ -149,7 +157,7 @@ public class F1CarControllerTests
             EnginePower = 0 
         };
 
-        var controller = new F1CarController(managerMock.Object);
+        var controller = new F1CarController(managerMock.Object, userMock.Object);
 
         var adminUser = new ClaimsPrincipal(new ClaimsIdentity(new[]
         {
@@ -188,5 +196,23 @@ public class F1CarControllerTests
             It.IsAny<double?>()
         ), Times.Never);
     }
+    
+    private Mock<UserManager<TUser>> GetMockUserManager<TUser>()
+        where TUser : class
+    {
+        var userManagerMock = new Mock<UserManager<TUser>>(
+            new Mock<IUserStore<TUser>>().Object,
+            new Mock<IOptions<IdentityOptions>>().Object,
+            new Mock<IPasswordHasher<TUser>>().Object,
+            new IUserValidator<TUser>[0],
+            new IPasswordValidator<TUser>[0],
+            new Mock<ILookupNormalizer>().Object,
+            new Mock<IdentityErrorDescriber>().Object,
+            new Mock<IServiceProvider>().Object,
+            new Mock<ILogger<UserManager<TUser>>>().Object);
+
+        return userManagerMock;
+    }
+
 
 }
