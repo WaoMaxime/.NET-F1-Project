@@ -1,6 +1,8 @@
 ﻿using BusinessLayer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+[Authorize]
 public class TyreController : Controller
 {
     private readonly IManager _manager;

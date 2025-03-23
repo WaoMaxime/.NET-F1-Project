@@ -75,9 +75,12 @@
             <td>@tyre.TyrePressure psi</td>
             <td>@tyre.OperationalTemperature °C</td>
             <td>@(tyre.Race != null ? tyre.Race.Name : "No Race")</td>
-            <td>
-                <a asp-controller="Tyre" asp-action="Details" asp-route-id="@tyre.CarId" class="btn btn-primary btn-sm">Details</a>
-            </td>
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <td>
+                    <a asp-controller="Tyre" asp-action="Details" asp-route-id="@tyre.CarId" class="btn btn-primary btn-sm">Details</a>
+                </td>
+            }
         </tr>
     }
     </tbody>
