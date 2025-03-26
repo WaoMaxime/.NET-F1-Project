@@ -8,7 +8,7 @@ stages:
 cache:
   key: dotnet-cache
   paths:
-    - ~/.nuget/packages  # Cache NuGet dependencies for faster builds
+    - .nuget  # Cache NuGet dependencies for faster builds
 
 before_script:
   - dotnet --version  # Verify .NET SDK version
@@ -20,35 +20,18 @@ build:
     - dotnet build --configuration Release  # Build the project
   artifacts:
     paths:
-      - "**/bin/Release/net7.0/"  # Store compiled binaries
+      - "**/bin/Release/net8.0/"  # Store compiled binaries
     expire_in: 1 hour
 
-unit_tests:
+tests:
   stage: test
   script:
-    - dotnet test Tests/Tests.csproj --logger "trx;LogFileName=test-results.trx" --results-directory ./TestResults/
+    - 'dotnet test Tests/Tests.csproj --logger junit --collect:"XPlat Code Coverage"'
+    - 'dotnet tool install dotnet-reportgenerator-globaltool --version 5.4.4 --tool-path tools'
+    - './tools/reportgenerator -reports:"Tests/TestResults/*/coverage.cobertura.xml" -targetdir:"Tests/coveragereport" -reporttypes:"Html"'
   artifacts:
     reports:
-      junit: ./TestResults/test-results.trx  # Store test results in GitLab
-    expire_in: 1 day
-
-integration_tests:
-  stage: test
-  script:
-    - dotnet test Tests/Tests.csproj --filter "Category=Integration" --logger "trx;LogFileName=integration-test-results.trx" --results-directory ./TestResults/
-  artifacts:
-    reports:
-      junit: ./TestResults/integration-test-results.trx  # Store integration test reports
-    expire_in: 1 day
-
-coverage_report:
-  stage: coverage_report
-  script:
-    - dotnet test /p:CollectCoverage=true /p:CoverletOutput=TestResults/coverage.info /p:CoverletOutputFormat=lcov
-    - mkdir -p coverage
-    - if [ -d "TestResults" ]; then cp -r TestResults/* coverage/; else echo "No coverage report found"; fi
-  artifacts:
+      junit: Tests/TestResults/TestResults.xml  # Store test results in GitLab
     paths:
-      - coverage/
-    expire_in: 1 week
-
+        - Tests/coveragereport
+    expire_in: 1 day
