@@ -3,6 +3,11 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+#ignore the report files and the tools
+**/TestResults/*
+**/coveragereport/*
+tools/
+
 # dotenv files
 .env
 
