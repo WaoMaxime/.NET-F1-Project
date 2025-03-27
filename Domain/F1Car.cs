@@ -52,6 +52,26 @@ public class F1Car : IValidatableObject
         int constructorsPosition,
         double driversPositions,
         DateTime manufactureDate,
+        TyreType tyres, IdentityUser user, string userId,
+        double? enginePower = null)
+    {
+        Team = team;
+        Chasis = chasis;
+        ConstructorsPosition = constructorsPosition;
+        DriversPositions = driversPositions;
+        ManufactureDate = manufactureDate;
+        Tyres = tyres;
+        EnginePower = enginePower;
+        User = user;
+        UserId = userId;
+    }
+    
+    public F1Car(
+        F1Team team,
+        string chasis,
+        int constructorsPosition,
+        double driversPositions,
+        DateTime manufactureDate,
         TyreType tyres, IdentityUser user,
         double? enginePower = null)
     {

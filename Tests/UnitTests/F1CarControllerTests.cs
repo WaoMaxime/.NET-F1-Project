@@ -86,7 +86,7 @@ public class F1CarControllerTests
     }
 
     [Fact]
-    public void Add_Post_AsAdmin_WithValidModel_RedirectsToDetails()
+    public void Add_Post_AsAdmin_WithValidModel_RedirectsToIndex()
     {
         // Arrange
         var managerMock = new Mock<IManager>();
@@ -121,9 +121,7 @@ public class F1CarControllerTests
 
         // Assert
         var redirectResult = Assert.IsType<RedirectToActionResult>(result);
-        Assert.Equal("Details", redirectResult.ActionName);
-        Assert.Equal(newCar.Id, redirectResult.RouteValues?["Id"]);
-        
+        Assert.Equal("Index", redirectResult.ActionName);
         managerMock.Verify(mgr => mgr.AddF1Car(
             newCar.Team,
             newCar.Chasis,
@@ -132,6 +130,7 @@ public class F1CarControllerTests
             newCar.ManufactureDate,
             newCar.Tyres,
             newCar.User, 
+            newCar.UserId, 
             newCar.EnginePower 
         ), Times.Once);
     }

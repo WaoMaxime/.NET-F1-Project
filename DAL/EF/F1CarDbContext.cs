@@ -96,6 +96,11 @@ public class F1CarDbContext : IdentityDbContext<IdentityUser>
             .Property(fc => fc.Tyres)
             .HasConversion<string>()
             .IsRequired();
+        
+        modelBuilder.Entity<F1Car>()
+            .HasOne(fc => fc.User)
+            .WithMany()
+            .HasForeignKey(fc => fc.UserId);
     }
     
     public bool CreateDatabase()

@@ -12,11 +12,11 @@
     <tr><td>Drivers Positions</td><td>@Model.DriversPositions</td></tr>
     <tr><td>Manufacture Date</td><td>@Model.ManufactureDate.ToString("dd/MM/yyyy")</td></tr>
     <tr><td>Tyres</td><td>@Model.Tyres</td></tr>
-    
+
     @{
-        var maintainerUsername = ViewData["MaintainerUsername"] as string;
-        var currentUserId = UserManager.GetUserId(User);
-        var isOwner = Model.UserId == currentUserId;
+    var maintainerUsername = ViewData["MaintainerUsername"] as string;
+    var currentUserId = UserManager.GetUserId(User);
+    var isOwner = Model.UserId == currentUserId;
     }
 
     @if ((Model.EnginePower != null && isOwner && SignInManager.IsSignedIn(User)) || User.IsInRole("Admin"))
@@ -70,18 +70,18 @@
     <tbody>
     @foreach (var tyre in Model.CarTyres)
     {
-        <tr>
-            <td>@tyre.Tyre.ToFriendlyString()</td>
-            <td>@tyre.TyrePressure psi</td>
-            <td>@tyre.OperationalTemperature °C</td>
-            <td>@(tyre.Race != null ? tyre.Race.Name : "No Race")</td>
-            @if (SignInManager.IsSignedIn(User))
-            {
-                <td>
-                    <a asp-controller="Tyre" asp-action="Details" asp-route-id="@tyre.CarId" class="btn btn-primary btn-sm">Details</a>
-                </td>
-            }
-        </tr>
+    <tr>
+        <td>@tyre.Tyre.ToFriendlyString()</td>
+        <td>@tyre.TyrePressure psi</td>
+        <td>@tyre.OperationalTemperature °C</td>
+        <td>@(tyre.Race != null ? tyre.Race.Name : "No Race")</td>
+        @if (SignInManager.IsSignedIn(User))
+        {
+        <td>
+            <a asp-controller="Tyre" asp-action="Details" asp-route-id="@tyre.CarId" class="btn btn-primary btn-sm">Details</a>
+        </td>
+        }
+    </tr>
     }
     </tbody>
 </table>

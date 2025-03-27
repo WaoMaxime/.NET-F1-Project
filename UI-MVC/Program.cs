@@ -61,6 +61,8 @@ builder.Services.ConfigureApplicationCookie(cfg =>
         return Task.CompletedTask;
     };
 });
+
+
 //ASP.NET Identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<F1CarDbContext>(); // Ensure this exists

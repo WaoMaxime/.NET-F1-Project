@@ -75,6 +75,13 @@ public class Manager : IManager
         return newCar;
     }
         
+    public F1Car AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, IdentityUser user, string userId ,double? enginePower = null)
+    {
+        var newCar = new F1Car(team, chasis, constructorsPosition, driversPositions, manufactureDate, tyres, user,userId ,enginePower);
+        ValidateModel(newCar);
+        _repository.CreateF1Car(newCar);
+        return newCar;
+    }
     public void AddRace(Race race)
     {
         _repository.CreateRace(race);

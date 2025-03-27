@@ -44,14 +44,13 @@ public class F1CarController : Controller
         ViewData["MaintainerUsername"] = username;
         return View(car);
     }
-    [Authorize(Roles = "Admin")]
+    
     [HttpGet]
     public ViewResult Add()
     {
         return View();
     }
     
-    [Authorize(Roles = "Admin")]
     [HttpPost]
     public IActionResult Add(F1Car newCar)
     {
@@ -59,6 +58,9 @@ public class F1CarController : Controller
         {
             return View(newCar);
         }
+        
+        var userId = _userManager.GetUserId(User);
+        
         _manager.AddF1Car(
             newCar.Team,
             newCar.Chasis,
@@ -66,8 +68,9 @@ public class F1CarController : Controller
             newCar.DriversPositions,
             newCar.ManufactureDate,
             newCar.Tyres,
-            newCar.User,
+            newCar.User, 
+            userId,
             newCar.EnginePower);
-        return RedirectToAction("Details", new { Id = newCar.Id });
+        return RedirectToAction("Index");
     }
 }

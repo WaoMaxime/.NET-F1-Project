@@ -65,6 +65,10 @@ public class IdentitySeeder
             car.User = users[count];
             count++;
         }
-        await _userManager.AddToRoleAsync(users[0], "User");
+        foreach (var user in users)
+        {
+            await _userManager.AddToRoleAsync(user, "User");
+        }
+
     }
 }

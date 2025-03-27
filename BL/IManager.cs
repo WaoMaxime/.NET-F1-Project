@@ -16,6 +16,7 @@ namespace BusinessLayer
         IEnumerable<CarTyre> GetCarTyresForCarById(int carId);
         F1Car AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, double? enginePower = null);
         F1Car AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, IdentityUser user, double? enginePower = null);
+        F1Car AddF1Car(F1Team team, string chasis, int constructorsPosition, double driversPositions, DateTime manufactureDate, TyreType tyres, IdentityUser user,string userId  , double? enginePower = null);
         void AddRace(Race race);
         void RemoveTyreFromCar(int carId, TyreType tyreType);
         F1Car ChangeHpF1Car(int carId, double newHp);
