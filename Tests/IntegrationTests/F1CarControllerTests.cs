@@ -2,10 +2,8 @@
 using System.Net.Http.Json;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Newtonsoft.Json;
 using Tests.IntegrationTests.Config;
 using UI.DTO;
-using JsonConverter = System.Text.Json.Serialization.JsonConverter;
 
 namespace Tests.IntegrationTests;
 
@@ -165,6 +163,7 @@ public class F1CarControllerTests : IClassFixture<ExtendedWebApplicationFactoryW
             var responseContent = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             // Assert
             response.EnsureSuccessStatusCode(); 
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Contains("Horsepower updated successfully", responseContent);
             _factory.AuthenticatedInstance();
         }
